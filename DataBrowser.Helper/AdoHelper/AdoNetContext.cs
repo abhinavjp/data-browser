@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataBrowser.Helper.AdoHelper
 {
-    public class AdoNetContext
+    public class AdoNetContext: IDisposable
     {
         private readonly IDbConnection _connection;
         private readonly IConnectionFactory _connectionFactory;
@@ -31,12 +31,12 @@ namespace DataBrowser.Helper.AdoHelper
         }
         public IDbCommand CreateCommand()
         {
-            var cmd = _connection.CreateCommand();
+            var command = _connection.CreateCommand();
             _rwLock.EnterReadLock();
             if (_uows.Count > 0)
-                cmd.Transaction = _uows.First.Value.Transaction;
+                command.Transaction = _uows.First.Value.Transaction;
             _rwLock.ExitReadLock();
-            return cmd;
+            return command;
         }
         private void RemoveTransaction(AdoNetUnitOfWork obj)
         {

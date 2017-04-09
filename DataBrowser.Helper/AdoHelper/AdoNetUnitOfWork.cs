@@ -20,6 +20,11 @@ namespace DataBrowser.Helper.AdoHelper
             _rolledBack = rolledBack;
             _committed = committed;
         }
+        public AdoNetUnitOfWork(IDbTransaction transaction)
+        {
+            Transaction = transaction;
+            _transaction = transaction;
+        }
         public IDbTransaction Transaction { get; private set; }
         public void Dispose()
         {
@@ -27,7 +32,7 @@ namespace DataBrowser.Helper.AdoHelper
                 return;
             _transaction.Rollback();
             _transaction.Dispose();
-            _rolledBack(this);
+            _rolledBack?.Invoke(this);
             _transaction = null;
         }
         public int Commit()
@@ -35,14 +40,15 @@ namespace DataBrowser.Helper.AdoHelper
             if (_transaction == null)
                 throw new InvalidOperationException("May not call save changes twice.");
             _transaction.Commit();
-            _committed(this);
+            _committed?.Invoke(this);
             _transaction = null;
             return 1;
         }
 
         public Task<int> CommitAsync()
         {
-            return new Task<int>(() => {
+            return new Task<int>(() =>
+            {
                 return Commit();
             });
         }
