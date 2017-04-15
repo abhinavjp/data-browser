@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBrowser.Api", "DataBrow
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBrowser.Web", "DataBrowser.Web\DataBrowser.Web.csproj", "{FAC9DAA2-50FF-405A-9BE8-3360DFB8E708}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBrowser.Helper", "DataBrowser.Helper\DataBrowser.Helper.csproj", "{8AB2B0F2-EE1A-4412-96BE-2338E5724FD5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{FAC9DAA2-50FF-405A-9BE8-3360DFB8E708}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAC9DAA2-50FF-405A-9BE8-3360DFB8E708}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAC9DAA2-50FF-405A-9BE8-3360DFB8E708}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AB2B0F2-EE1A-4412-96BE-2338E5724FD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AB2B0F2-EE1A-4412-96BE-2338E5724FD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AB2B0F2-EE1A-4412-96BE-2338E5724FD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AB2B0F2-EE1A-4412-96BE-2338E5724FD5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
