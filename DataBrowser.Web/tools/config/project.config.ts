@@ -17,12 +17,12 @@ export class ProjectConfig extends SeedConfig {
     let additionalPackages: ExtendPackages[] = [
       {
         name: '@ng-bootstrap/ng-bootstrap',
-       
+
         path: 'node_modules/@ng-bootstrap/ng-bootstrap/bundles/ng-bootstrap.js',
       },
       {
         name: 'lodash',
-      
+
         path: 'node_modules/lodash/lodash.js',
       },
 
@@ -36,9 +36,9 @@ export class ProjectConfig extends SeedConfig {
     // Add `NPM` third-party libraries to be injected/bundled.
     this.NPM_DEPENDENCIES = [
       ...this.NPM_DEPENDENCIES,
-      { src: 'bootstrap/dist/js/bootstrap.min.js', inject: 'libs' },
-      { src: 'bootstrap/dist/css/bootstrap.min.css', inject: true },
-      // {src: 'jquery/dist/jquery.min.js', inject: 'libs'},
+      { src: 'bootstrap/dist/css/bootstrap.css', inject: true },
+      { src: 'jquery/dist/jquery.min.js', inject: 'libs' },
+      { src: 'bootstrap/dist/js/bootstrap.js', inject: 'libs' },
       { src: 'lodash/lodash.min.js', inject: 'libs' },
     ];
 
