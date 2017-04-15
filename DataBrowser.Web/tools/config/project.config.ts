@@ -17,12 +17,12 @@ export class ProjectConfig extends SeedConfig {
     let additionalPackages: ExtendPackages[] = [
       {
         name: '@ng-bootstrap/ng-bootstrap',
-        // Path to the package's bundle
+       
         path: 'node_modules/@ng-bootstrap/ng-bootstrap/bundles/ng-bootstrap.js',
       },
       {
         name: 'lodash',
-        // Path to the package's bundle
+      
         path: 'node_modules/lodash/lodash.js',
       },
 

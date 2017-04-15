@@ -426,8 +426,9 @@ export class SeedConfig {
       join('node_modules', '*', 'package.json'),
       join('node_modules', '@angular', '*', 'package.json'),
       join('node_modules', '@ng-bootstrap', '*', 'package.json'),
+      join('node_modules', '@types', '*', 'package.json'),
       join('node_modules', 'lodash', '*', 'package.json'),
-      
+
 
       // for other modules like @ngx-translate the package.json path needs to updated here
       // otherwise npm run build.prod would fail
