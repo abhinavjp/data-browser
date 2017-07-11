@@ -10,9 +10,9 @@ namespace DataBrowser.Helper.AdoHelper
 {
     public class AdoNetUnitOfWork : IUnitOfWork
     {
-        private IDbTransaction _transaction;
-        private readonly Action<AdoNetUnitOfWork> _rolledBack;
         private readonly Action<AdoNetUnitOfWork> _committed;
+        private readonly Action<AdoNetUnitOfWork> _rolledBack;
+        private IDbTransaction _transaction;
         public AdoNetUnitOfWork(IDbTransaction transaction, Action<AdoNetUnitOfWork> rolledBack, Action<AdoNetUnitOfWork> committed)
         {
             Transaction = transaction;
@@ -26,15 +26,6 @@ namespace DataBrowser.Helper.AdoHelper
             _transaction = transaction;
         }
         public IDbTransaction Transaction { get; private set; }
-        public void Dispose()
-        {
-            if (_transaction == null)
-                return;
-            _transaction.Rollback();
-            _transaction.Dispose();
-            _rolledBack?.Invoke(this);
-            _transaction = null;
-        }
         public int Commit()
         {
             if (_transaction == null)
@@ -51,6 +42,15 @@ namespace DataBrowser.Helper.AdoHelper
             {
                 return Commit();
             });
+        }
+        public void Dispose()
+        {
+            if (_transaction == null)
+                return;
+            _transaction.Rollback();
+            _transaction.Dispose();
+            _rolledBack?.Invoke(this);
+            _transaction = null;
         }
     }
 }

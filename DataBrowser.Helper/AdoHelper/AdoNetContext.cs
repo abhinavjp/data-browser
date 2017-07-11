@@ -47,6 +47,8 @@ namespace DataBrowser.Helper.AdoHelper
         public void Dispose()
         {
             _connection.Dispose();
+            _rwLock.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
