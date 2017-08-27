@@ -28,11 +28,12 @@ namespace DataBrowser.Helper.AdoHelper
         public IDbTransaction Transaction { get; private set; }
         public int Commit()
         {
-            if (_transaction == null)
-                throw new InvalidOperationException("May not call save changes twice.");
-            _transaction.Commit();
-            _committed?.Invoke(this);
-            _transaction = null;
+            if (_transaction != null)
+            {
+                _transaction.Commit();
+                _committed?.Invoke(this);
+                _transaction = null;
+            }
             return 1;
         }
 
@@ -51,6 +52,16 @@ namespace DataBrowser.Helper.AdoHelper
             _transaction.Dispose();
             _rolledBack?.Invoke(this);
             _transaction = null;
+        }
+
+        public void SetLogger(Action<string> logger)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetCommandTimeout(int timeOut)
+        {
+            throw new NotImplementedException();
         }
     }
 }
