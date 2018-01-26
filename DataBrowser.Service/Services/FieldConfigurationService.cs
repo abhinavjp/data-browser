@@ -9,12 +9,10 @@ namespace DataBrowser.Service.Services
 {
     public class FieldConfigurationService
     {
-        internal void GetAll(int tableConfigurationId)
+        internal List<FieldsConfigurationServiceModel> GetAll(int tableConfigurationId)
         {
             var fieldConfigurations = new List<FieldsConfigurationServiceModel>();
-            var tableFieldConfigurations = fieldConfigurations.Where(w=>w.TableConfigurationId==tableConfigurationId).ToList();
-
-
+            return fieldConfigurations.Where(w=>w.TableConfigurationId==tableConfigurationId).ToList();
         }
     }
 }
