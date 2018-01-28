@@ -68,7 +68,7 @@ namespace DataBrowser.Helper.QueryBuilder
         {
             if (filterBuilderModel == null)
                 return string.Empty;
-            var comparisionString = GetComparisionString(filterBuilderModel.ComparerOperator, filterBuilderModel.IsNotComparision);
+            var comparisionString = GetComparisionString(filterBuilderModel.ComparerOperator, filterBuilderModel.IsNotComparision, filterBuilderModel.IsComparedToDestinationValue);
             var conditionBuilder = new StringBuilder(string.Format(comparisionString, filterBuilderModel.SourceCondition, filterBuilderModel.DestinationCondition));
             if (filterBuilderModel.InBlockFilters != null)
                 conditionBuilder.Append($" {filterBuilderModel.InwardConditionLogic} ({BuildFilters(filterBuilderModel.InBlockFilters)})");
@@ -76,21 +76,22 @@ namespace DataBrowser.Helper.QueryBuilder
             return conditionBuilder.ToString();
         }
 
-        private static string GetComparisionString(ComparerOperator comparerOperator, bool isNotCondition)
+        private static string GetComparisionString(ComparerOperator comparerOperator, bool isNotCondition, bool isValue)
         {
             var conditionOperator = GetComparisionOperator(comparerOperator, isNotCondition);
+            var secondArgumentAsString = isValue ? "{1}" : "' + {1} + '";
             switch (comparerOperator)
             {
                 case ComparerOperator.Contains:
-                    return "{0} " + conditionOperator + " '%{1}%'";
+                    return "{0} " + conditionOperator + " '%" + secondArgumentAsString + "%'";
                 case ComparerOperator.StartsWith:
-                    return "{0} " + conditionOperator + " '{1}%'";
+                    return "{0} " + conditionOperator + " '" + secondArgumentAsString + "%'";
                 case ComparerOperator.EndsWith:
-                    return "{0} " + conditionOperator + " '%{1}'";
+                    return "{0} " + conditionOperator + " '%" + secondArgumentAsString + "'";
                 case ComparerOperator.LessThan:
                     return "{0} " + conditionOperator + " {1}";
                 case ComparerOperator.LessThanOrEqualTo:
-                    return "{0} " + conditionOperator + " {1}'";
+                    return "{0} " + conditionOperator + " {1}";
                 case ComparerOperator.GreaterThan:
                     return "{0} " + conditionOperator + " {1}";
                 case ComparerOperator.GreaterThanOrEqualTo:
@@ -98,7 +99,7 @@ namespace DataBrowser.Helper.QueryBuilder
                 case ComparerOperator.In:
                     return "{0} " + conditionOperator + " ({1})";
                 default:
-                    return "{0} " + conditionOperator + " '{1}'";
+                    return "{0} " + conditionOperator + (isValue ? " '{1}'" : " {1}");
             }
         }
 

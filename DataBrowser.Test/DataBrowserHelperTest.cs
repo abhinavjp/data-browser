@@ -10,7 +10,7 @@ namespace DataBrowser.Test
         [TestMethod]
         public void BasicTest()
         {
-            var query = Builder.From("Employees").Select("Forename").Select("Surname").Where("Employees","Forename", ComparerOperator.EqualTo, "TestFirstName3");
+            var query = Builder.From("Employees").Select("Forename").Select("Surname").Where("Employees","Forename", ComparerOperator.Contains, "Employees", "Surname", true);
         }
     }
 }
