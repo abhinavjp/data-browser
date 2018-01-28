@@ -69,6 +69,7 @@
     <Compile Include="QueryBuilder\JoinBuilder.cs" />
     <Compile Include="QueryBuilder\QueryBuilderServiceModel.cs" />
     <Compile Include="QueryBuilder\SelectBuilder.cs" />
+    <Compile Include="QueryBuilder\WhereBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

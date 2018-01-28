@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBrowser.Data", "DataBrowser.Data\DataBrowser.Data.csproj", "{4249F020-F676-4054-8817-81B7E1EBE071}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBrowser.Web", "DataBrowser.Web\DataBrowser.Web.csproj", "{FAC9DAA2-50FF-405A-9BE8-3360DFB8E708}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBrowser.Helper", "DataBrowser.Helper\DataBrowser.Helper.csproj", "{8AB2B0F2-EE1A-4412-96BE-2338E5724FD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBrowser.Test", "DataBrowser.Test\DataBrowser.Test.csproj", "{CED23C15-AE19-4FC5-9C04-DFD498FAD2FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,8 +41,15 @@ Global
 		{8AB2B0F2-EE1A-4412-96BE-2338E5724FD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AB2B0F2-EE1A-4412-96BE-2338E5724FD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AB2B0F2-EE1A-4412-96BE-2338E5724FD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CED23C15-AE19-4FC5-9C04-DFD498FAD2FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CED23C15-AE19-4FC5-9C04-DFD498FAD2FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CED23C15-AE19-4FC5-9C04-DFD498FAD2FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CED23C15-AE19-4FC5-9C04-DFD498FAD2FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D979E3C5-AD20-48EB-95C4-5B1B8AC33493}
 	EndGlobalSection
 EndGlobal

@@ -78,11 +78,20 @@ namespace DataBrowser.Helper.QueryBuilder
                 return;
             if (tableBuilderList == null)
                 tableBuilderList = new List<TableBuilderModel>();
-            if (overwriteIfExists || !tableBuilderList.Any(a => a.TableName.Equals(tableBuilderItem.TableName)))
+            if(overwriteIfExists)
+            {
+                tableBuilderList.RemoveAll(a => a.TableName.Equals(tableBuilderItem.TableName));
+            }
+            if (!tableBuilderList.Any(a => a.TableName.Equals(tableBuilderItem.TableName)))
                 tableBuilderList.Add(tableBuilderItem);
         }
 
-        public static void AddItems(this List<TableBuilderModel> tableBuilderList, IEnumerable<TableBuilderModel> tableBuilderItems, bool overwriteIfExists)
+        public static void AddItems(this List<TableBuilderModel> tableBuilderList, IEnumerable<TableBuilderModel> tableBuilderItems)
+        {
+            AddItems(tableBuilderList, tableBuilderItems, false);
+        }
+
+            public static void AddItems(this List<TableBuilderModel> tableBuilderList, IEnumerable<TableBuilderModel> tableBuilderItems, bool overwriteIfExists)
         {
             if (tableBuilderItems == null)
                 return;
@@ -91,6 +100,7 @@ namespace DataBrowser.Helper.QueryBuilder
 
             if (overwriteIfExists)
             {
+                tableBuilderList.RemoveAll(a => tableBuilderItems.Any(w => a.TableName.Equals(w.TableName)));
                 tableBuilderList.AddRange(tableBuilderItems);
                 return;
             }

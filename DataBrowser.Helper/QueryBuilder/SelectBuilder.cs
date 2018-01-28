@@ -8,23 +8,36 @@ namespace DataBrowser.Helper.QueryBuilder
 {
     public static class SelectBuilder
     {
+        public static QueryBuilderServiceModel Select(this QueryBuilderServiceModel queryBuilderModel, string columnName)
+        {
+            if (queryBuilderModel.SelectedColumns == null)
+                queryBuilderModel.SelectedColumns = new List<SelectBuilderModel>();
+            queryBuilderModel.SelectedColumns.Add(new SelectBuilderModel(columnName, queryBuilderModel.FromTableName));
+            return queryBuilderModel;
+        }
         public static QueryBuilderServiceModel Select(this QueryBuilderServiceModel queryBuilderModel, IEnumerable<string> columnNames)
         {
-            queryBuilderModel.SelectedColumns = columnNames?.Select(s => new SelectBuilderModel(s, queryBuilderModel.FromTableName)).ToList();
+            if (queryBuilderModel.SelectedColumns == null)
+                queryBuilderModel.SelectedColumns = new List<SelectBuilderModel>();
+            queryBuilderModel.SelectedColumns.AddRange(columnNames?.Select(s => new SelectBuilderModel(s, queryBuilderModel.FromTableName)));
             return queryBuilderModel;
         }
 
         public static QueryBuilderServiceModel Select(this QueryBuilderServiceModel queryBuilderModel, IEnumerable<ISelectColumnModel> columnNamesWithAlias)
         {
-            queryBuilderModel.SelectedColumns = columnNamesWithAlias?.Select(s => new SelectBuilderModel(s, queryBuilderModel.FromTableName)).ToList();
+            if (queryBuilderModel.SelectedColumns == null)
+                queryBuilderModel.SelectedColumns = new List<SelectBuilderModel>();
+            queryBuilderModel.SelectedColumns.AddRange(columnNamesWithAlias?.Select(s => new SelectBuilderModel(s, queryBuilderModel.FromTableName)));
             return queryBuilderModel;
         }
 
         public static QueryBuilderServiceModel Select(this QueryBuilderServiceModel queryBuilderModel, IEnumerable<ISelectColumnTableModel> columnNamesWithAliasAndTable)
         {
-            queryBuilderModel.SelectedColumns = columnNamesWithAliasAndTable?.Select(s => new SelectBuilderModel(s)).ToList();
+            if (queryBuilderModel.SelectedColumns == null)
+                queryBuilderModel.SelectedColumns = new List<SelectBuilderModel>();
+            queryBuilderModel.SelectedColumns.AddRange(columnNamesWithAliasAndTable?.Select(s => new SelectBuilderModel(s)));
             return queryBuilderModel;
-        }   
+        }
         //private List<SelectBuilderModel> _selectColumnList = new List<SelectBuilderModel>();
         //private bool _isSelectAllColumns = true;
 

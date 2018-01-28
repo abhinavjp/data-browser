@@ -14,7 +14,5 @@ namespace DataBrowser.Helper.QueryBuilder
         {
             _tableName = tableName;
         }
-
-        
     }
 }

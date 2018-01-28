@@ -68,7 +68,7 @@ namespace DataBrowser.Helper.QueryBuilder
         {
             if (filterBuilderModel == null)
                 return string.Empty;
-            var comparisionString = GetComparisionString(filterBuilderModel.ComparerOperator);
+            var comparisionString = GetComparisionString(filterBuilderModel.ComparerOperator, filterBuilderModel.IsNotComparision);
             var conditionBuilder = new StringBuilder(string.Format(comparisionString, filterBuilderModel.SourceCondition, filterBuilderModel.DestinationCondition));
             if (filterBuilderModel.InBlockFilters != null)
                 conditionBuilder.Append($" {filterBuilderModel.InwardConditionLogic} ({BuildFilters(filterBuilderModel.InBlockFilters)})");
@@ -76,28 +76,52 @@ namespace DataBrowser.Helper.QueryBuilder
             return conditionBuilder.ToString();
         }
 
-        public static string GetComparisionString(ComparerOperator comparerOperator)
+        private static string GetComparisionString(ComparerOperator comparerOperator, bool isNotCondition)
+        {
+            var conditionOperator = GetComparisionOperator(comparerOperator, isNotCondition);
+            switch (comparerOperator)
+            {
+                case ComparerOperator.Contains:
+                    return "{0} " + conditionOperator + " '%{1}%'";
+                case ComparerOperator.StartsWith:
+                    return "{0} " + conditionOperator + " '{1}%'";
+                case ComparerOperator.EndsWith:
+                    return "{0} " + conditionOperator + " '%{1}'";
+                case ComparerOperator.LessThan:
+                    return "{0} " + conditionOperator + " {1}";
+                case ComparerOperator.LessThanOrEqualTo:
+                    return "{0} " + conditionOperator + " {1}'";
+                case ComparerOperator.GreaterThan:
+                    return "{0} " + conditionOperator + " {1}";
+                case ComparerOperator.GreaterThanOrEqualTo:
+                    return "{0} " + conditionOperator + " {1}";
+                case ComparerOperator.In:
+                    return "{0} " + conditionOperator + " ({1})";
+                default:
+                    return "{0} " + conditionOperator + " '{1}'";
+            }
+        }
+
+        private static string GetComparisionOperator(ComparerOperator comparerOperator, bool isNotCondition)
         {
             switch (comparerOperator)
             {
                 case ComparerOperator.Contains:
-                    return "{0} LIKE '%{1}%'";
                 case ComparerOperator.StartsWith:
-                    return "{0} LIKE '{1}%'";
                 case ComparerOperator.EndsWith:
-                    return "{0} LIKE '%{1}'";
+                    return isNotCondition ? "NOT LIKE" : "LIKE";
                 case ComparerOperator.LessThan:
-                    return "{0} < {1}";
+                    return isNotCondition ? ">=" : "<";
                 case ComparerOperator.LessThanOrEqualTo:
-                    return "{0} <= {1}'";
+                    return isNotCondition ? ">" : "<=";
                 case ComparerOperator.GreaterThan:
-                    return "{0} > {1}";
+                    return isNotCondition ? "<=" : ">";
                 case ComparerOperator.GreaterThanOrEqualTo:
-                    return "{0} >= {1}";
+                    return isNotCondition ? "<" : ">=";
                 case ComparerOperator.In:
-                    return "{0} IN ({1})";
+                    return isNotCondition ? "NOT IN" : "IN";
                 default:
-                    return "{0} = '{1}'";
+                    return isNotCondition ? "<>" : "=";
             }
         }
     }
