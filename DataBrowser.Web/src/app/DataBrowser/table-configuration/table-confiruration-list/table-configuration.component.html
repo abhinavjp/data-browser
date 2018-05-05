@@ -1,0 +1,50 @@
+<p-panel>
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <span class="col-md-8 ui-panel-title" style="font-size:18px;display:inline-block;margin-top:2px">
+                <i class="fa fa-table"></i>
+                &nbsp;
+                <span>Table Configuration</span>
+                <i class="fa fa-plus-circle fa-lg cursor-pointer text-success" (click)="createTableConfiguration()"></i>
+            </span>
+            <div class="pull-right">
+                <p-dropdown [options]="dataBaseConnectionbindDropdown" [(ngModel)]="selectedDataBaseConnecton" [style]="{'width':'250px'}"></p-dropdown>
+            </div>
+        </div>
+
+    </p-header>
+    <div style="height:460px;">
+        <p-dataTable [value]="tableconfigurationLists">
+            <p-column [sortable]="false" [filter]="false" field="actions" header="Actions" [style]="{'width':'100px','text-align':'center'}">
+                <ng-template let-data="rowData" pTemplate="body">
+                    <span class="cursor-pointer" (click)="deleteDatabaseConnection(data.id,data.name)">
+                        <i class="fa fa-edit text-primary" tooltip="edit"></i>
+                    </span>
+                    &nbsp;
+                    <span class="cursor-pointer" (click)="deleteDatabaseConnection(data.id,data.name)">
+                        <i class="fa fa-trash text-danger" tooltip="Delete"></i>
+                    </span>
+                </ng-template>
+            </p-column>
+            <p-column [sortable]="true" [filter]="true" field="id" header="Id"></p-column>
+            <p-column [sortable]="true" [filter]="true" field="name" header="Database Name"></p-column>
+            <p-column [sortable]="true" [filter]="true" field="dataKey" header="Data Key"></p-column>
+            <p-column [sortable]="true" [filter]="true" field="masterTableName" header="Master Table"></p-column>
+            <p-column [sortable]="false" [filter]="false" field="isTable" header="Table" [style]="{'width':'80px','text-align':'center'}">
+                <ng-template let-data="rowData" pTemplate="body">
+                    <i class="fa fa-check-square text-success" *ngIf="data.isTable"></i>
+                    <i class="fa fa-times-square text-danger" *ngIf="!data.isTable"></i>
+                </ng-template>
+            </p-column>
+            <p-column [sortable]="false" [filter]="false" field="isView" header="view" [style]="{'width':'80px','text-align':'center'}">
+                <ng-template let-data="rowData" pTemplate="body">
+                    <i class="fa fa-check-square text-success" *ngIf="data.isView"></i>
+                    <i class="fal fa-times-square text-danger" *ngIf="!data.isView"></i>
+                </ng-template>
+            </p-column>
+        </p-dataTable>
+    </div>
+    <p-footer>
+        Demo
+    </p-footer>
+</p-panel>

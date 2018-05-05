@@ -1,0 +1,6 @@
+﻿Generated model file: DataBrowserSampleModel.edmx.
+Loading metadata from the database took 00:00:03.3908823.
+Generating the model took 00:00:01.6525158.
+Added the connection string to the App.Config file.
+Writing the .edmx file took 00:00:00.0188399.
+The 'data source' keyword is not supported.

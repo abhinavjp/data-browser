@@ -1,0 +1,25 @@
+<p-panel>
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <span class="col-md-8 ui-panel-title" style="font-size:18px;display:inline-block;margin-top:2px">
+                <i class="fa fa-database"></i>
+                &nbsp;
+                <span>Data Browser Main</span>
+            </span>
+            <div class="pull-right">
+                <p-dropdown [options]="dataBrowserFilterDropDown" [(ngModel)]="selectedTableConfiguration" (onChange)="getDetailsOfFields(1,$event)"
+                    [style]="{'width':'250px'}"></p-dropdown>
+            </div>
+        </div>
+
+    </p-header>
+    <div>
+        <p-dataTable [value]="fieldValues" scrollable="true" scrollHeight="390px" [style]="{'height':'450px'}">
+            <p-column [sortable]="true" [filter]="true" *ngFor="let col of columns" [field]="col.field" [header]="col.header" [style]="{'width':'180px'}"></p-column>
+        </p-dataTable>
+    </div>
+    <p-footer>
+        <p-paginator [rows]="pageSize" [totalRecords]="totalRecords" [rowsPerPageOptions]="[25,50,100]" (onPageChange)="paginate($event)"
+            #p></p-paginator>
+    </p-footer>
+</p-panel>

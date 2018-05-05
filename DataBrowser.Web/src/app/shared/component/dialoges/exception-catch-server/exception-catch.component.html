@@ -1,0 +1,36 @@
+<div class="modal-header">
+    <h4 class="modal-title pull-left">
+        <i class="fa fa-exclamation-triangle"></i>&nbsp;{{title}}</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="colseModel()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-9 error-back">
+            <span>{{exceptionMessage}}</span>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="errorDetail1 !== undefined && errorDetail1 !== null && errorDetail1 !== ''">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-9 error-back">
+            <span>{{errorDetail1}}</span>
+        </div>
+    </div>
+
+
+    <div class="row" *ngIf="errorDetail2 !== undefined && errorDetail2 !== null && errorDetail2 !== ''">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-9 error-back">
+            <span>{{errorDetail2}}</span>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)="colseModel()">Close</button>
+</div>

@@ -1,0 +1,74 @@
+<div class="modal-header">
+    <h5 class="modal-title pull-left">Manage Connection</h5>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModel()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form [formGroup]="dataBaseConnecationForm">
+        <div class="form-group row">
+            <div class="col-md-4 text-right">
+                <label for="names" class="text-right">Name</label>
+            </div>
+            <div class="col-md-8">
+                <input type="text" class="form-control form-control-sm" id="names" placeholder="Enter Name" formControlName="name" required>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
+            <div class="col-md-4 text-right">
+                <label for="instance">Instance Name</label>
+            </div>
+            <div class="col-md-8">
+                <input type="text" class="form-control form-control-sm" id="instance" placeholder="Enter Instance" formControlName="serverInstanceName"
+                    required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-4 text-right">
+                <label for="userName">User Name</label>
+            </div>
+            <div class="col-md-8">
+                <input type="text" class="form-control form-control-sm" id="userName" placeholder="Enter User Name" formControlName="userName"
+                    required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-4 text-right">
+                <label for="password">Password</label>
+            </div>
+            <div class="col-md-8">
+                <input type="password" class="form-control form-control-sm" id="password" placeholder="Enter Password" formControlName="password"
+                    required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-8">
+                <button type="button" class="btn btn-outline-secondary btn-block btn-sm" (click)="getDataBaseLists()">Get DataBase</button>
+            </div>
+        </div>
+
+        <div class="form-group row" style="margin-top:18px;" *ngIf="dataBaseNameLists.length > 0">
+            <div class="col-md-4 text-right">
+                <label for="database">DataBase Name</label>
+            </div>
+            <div class="col-md-8">
+                <select class="form-control form-control-sm" formControlName="dataBaseName">
+                    <option disabled selected value="">Select DataBase</option>
+                    <option *ngFor = "let dataBase of dataBaseNameLists" [value]="dataBase">{{dataBase}}</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="saveDataBaseConnection()">Save</button>
+    <button type="button" class="btn btn-outline-danger" (click)="closeModel()">Close</button>
+</div>

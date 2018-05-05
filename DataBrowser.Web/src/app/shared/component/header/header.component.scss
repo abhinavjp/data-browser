@@ -1,0 +1,15 @@
+
+.bg-custom-color{
+    // background-color: #7386D5;
+    // background-color: #20272a; /* Black */
+    //color:!important rgb(255, 255, 255);
+    background: rgb(25, 118, 210);
+    color: white !important;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    z-index: 10;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 5px 0px
+    // color: #7386D5;
+}

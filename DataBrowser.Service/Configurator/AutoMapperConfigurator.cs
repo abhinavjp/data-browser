@@ -5,19 +5,27 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using DataBrowser.Service.Models;
+using DataBrowser.Data;
 
 namespace DataBrowser.Service.Configurator
 {
     public static class AutoMapperConfigurator
     {
-        private static bool _isInitialized = false;
 
         public static void Configure()
         {
-            Mapper.Initialize(cfg => {
-                cfg.CreateMap<ConnectionConfigurationServiceModel, ConnectionConfigurationViewServiceModel>();
-
-            });
+            Mapper.Initialize(cfg => Init(cfg));
         }
+
+        public static void Init(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<ConnectionConfigurationServiceModel, ConnectionConfigurationViewServiceModel>();
+            cfg.CreateMap<DataBaseConnection, DataBaseConnectionServiceModel>().ReverseMap();
+
+            cfg.CreateMap<TableConfiguration, TableConfiguratonServiceModel>();
+            cfg.CreateMap<TableConfiguratonServiceModel, TableConfiguration>();
+            cfg.CreateMap<FieldConfiguration, FieldConfigurationServiceModel>().ReverseMap();
+        }
+
     }
 }

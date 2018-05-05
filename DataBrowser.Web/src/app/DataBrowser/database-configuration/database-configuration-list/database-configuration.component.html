@@ -1,0 +1,35 @@
+<p-panel>
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <span class="ui-panel-title" style="font-size:18px;display:inline-block;margin-top:2px">
+                <i class="fa fa-database"></i>
+                &nbsp;
+                <span>DataBase Connection </span>
+                <i class="fa fa-plus-circle fa-lg cursor-pointer text-success" (click)="createDataBaseConnection()"></i>
+            </span>
+
+        </div>
+    </p-header>
+    <div style="height:460px;">
+        <p-dataTable [value]="rowData">
+            <p-column [sortable]="false" [filter]="false" field="actions" header="Actions" [style]="{'width':'80px','text-align':'center'}">
+                <!-- <ng-template pTemplate="filter">
+                    <input type="checkbox">
+                </ng-template> -->
+                <ng-template let-data="rowData" pTemplate="body">
+                    <span class="cursor-pointer" (click)="deleteDatabaseConnection(data.id,data.name)">
+                        <i class="fa fa-trash text-danger" tooltip="Delete"></i>
+                    </span>
+                </ng-template>
+            </p-column>
+
+            <p-column [sortable]="true" [filter]="true" field="name" header="Name" [style.background]="red"></p-column>
+            <p-column [sortable]="true" [filter]="true" field="dataBaseName" header="Database Name"></p-column>
+            <p-column [sortable]="true" [filter]="true" field="serverInstanceName" header="Server Instance Name"></p-column>
+            <p-column [sortable]="true" [filter]="true" field="userName" header="User Name"></p-column>
+        </p-dataTable>
+    </div>
+    <p-footer>
+        <p-paginator [rows]="2" [totalRecords]="rowData.length"></p-paginator>
+    </p-footer>
+</p-panel>

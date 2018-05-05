@@ -43,7 +43,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="RepositoryFoundation, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Foundation.1.5.2\lib\net45\RepositoryFoundation.dll</HintPath>
+      <HintPath>..\packages\Foundation.1.8.0\lib\net45\RepositoryFoundation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="StructureMap, Version=4.4.2.472, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StructureMap.4.4.2\lib\net45\StructureMap.dll</HintPath>
@@ -61,16 +62,32 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configurator\AutoMapperConfigurator.cs" />
+    <Compile Include="Configurator\StructureMapper.cs" />
+    <Compile Include="Interface\IDataBaseConnectionService.cs" />
+    <Compile Include="Interface\IDataBrowserService.cs" />
+    <Compile Include="Interface\ITableConfigurationService.cs" />
     <Compile Include="Models\ColumnDetailServiceModel.cs" />
     <Compile Include="Models\ConnectionConfigurationViewServiceModel.cs" />
     <Compile Include="Models\ConnectionConfigurationServiceModel.cs" />
+    <Compile Include="Models\DataBaseConnectionServiceModel.cs" />
+    <Compile Include="Models\DataBaseNameFilterServiceModel.cs" />
+    <Compile Include="Models\DatabrowserDropdownFilterServiceModel.cs" />
+    <Compile Include="Models\FieldConfigurationServiceModel.cs" />
     <Compile Include="Models\FieldsConfigurationServiceModel.cs" />
+    <Compile Include="Models\IdNameServiceModel.cs" />
+    <Compile Include="Models\TableAndFieldConfigurationServiceModel.cs" />
+    <Compile Include="Models\TableConfigurationDatabaseFilterServiceModel.cs" />
     <Compile Include="Models\TableConfigurationViewServiceModel.cs" />
     <Compile Include="Models\TableConfigurationServiceModel.cs" />
+    <Compile Include="Models\TableConfiguratonServiceModel.cs" />
+    <Compile Include="Models\TableDetailsServiceModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\DatabaseBrowserService.cs" />
+    <Compile Include="Services\DataBaseConnectionService.cs" />
+    <Compile Include="Services\DataBrowserService.cs" />
     <Compile Include="Services\FieldConfigurationService.cs" />
+    <Compile Include="Services\TableConfigurationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -78,7 +95,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Constants\" />
-    <Folder Include="Interfaces\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataBrowser.Data\DataBrowser.Data.csproj">
+      <Project>{4249F020-F676-4054-8817-81B7E1EBE071}</Project>
+      <Name>DataBrowser.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

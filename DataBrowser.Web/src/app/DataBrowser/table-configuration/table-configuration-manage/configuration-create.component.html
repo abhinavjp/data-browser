@@ -1,0 +1,181 @@
+<p-panel>
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <span class="col-md-8 ui-panel-title" style="font-size:18px;display:inline-block;margin-top:2px">
+                <i class="fa fa-table"></i>
+                &nbsp;
+                <span>Manage Table Configuration</span>
+                <!-- <i class="fa fa-plus-circle fa-lg cursor-pointer text-success" (click)="createTableConfiguration()"></i> -->
+            </span>
+        </div>
+    </p-header>
+    <div style="height:480px">
+        <form [formGroup]="tableConfigCreateForm">
+            <fieldset>
+                <legend class="main-config border-left-purple">
+                    <span>Main Table Configuration</span>
+                </legend>
+                <div class="row">
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="names">Name</label>
+                            <input type="text" class="form-control form-control-sm" id="names" placeholder="Enter Name" formControlName="name" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="key">Data Key</label>
+                            <input type="text" class="form-control form-control-sm" id="key" placeholder="Enter Data Key" formControlName="dataKey" required>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-1">
+                        <span class="col-md-4">Table</span>
+                        <label class="switch" style=" margin-top:15px;">
+                            <input type="checkbox" formControlName="isTable" (change)="checkBoxEventTable()">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <div class="col-md-1">
+                        <span class="col-md-4">View</span>
+                        <label class="switch" style=" margin-top:15px;">
+                            <input type="checkbox" formControlName="isView" (change)="checkBoxEventView()">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="password fornts">Master Table</label>
+                            <select class="form-control form-control-sm" formControlName="masterTableName" (change)="getDetailsOfSelecredTabels(tableConfigCreateForm.controls['masterTableName'].value)"
+                                required>
+                                <option disabled selected value="">Select Master Table</option>
+                                <option *ngFor="let table of tableLists">{{table}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                </div>
+            </fieldset>
+
+            <fieldset *ngIf="tableDetailsList.length > 0">
+                <legend class="main-config border-left-purple">
+                    <div class="row">
+                        <span class="col-md-8">Master Table Columns Configurations</span>
+
+                        <div class="col-md-4 text-right">
+                            <span>Source Table : {{tableConfigCreateForm.controls['masterTableName'].value}}</span>
+                        </div>
+
+                    </div>
+                </legend>
+                <div class="row" *ngIf="tableDetailsList.length > 0">
+                    <div class="col-md-12">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div style="overflow-y: scroll; height:310px;">
+                                    <div style="height:28px;">
+                                        <label style="margin-left:2%;">
+                                            <input id="checkbox2" type="checkbox" [(ngModel)]="isCheckedAll" [ngModelOptions]="{standalone: true}" (change)="checkAll()">
+                                        </label>
+                                        <label style="margin-left:2%;font-weight:bold">Source Column Name</label>
+                                        <label style="margin-left:12%;font-weight:bold">Reference Table Name</label>
+                                        <label style="margin-left:4%;font-weight:bold">Reference Column Name</label>
+                                        <label style="margin-left:9%;font-weight:bold">Map Columns To Display</label>
+                                    </div>
+                                    <div formArrayName="tableDetailsArray" *ngFor="let item of tableConfigCreateForm.get('tableDetailsArray').controls; let i = index;">
+                                        <div style="padding:4px;">
+                                            <div [formGroupName]="i">
+
+                                                <div style="
+                                        padding: 10px;
+                                        margin-left:7px;
+                                        border-radius: 0;
+                                        max-width: 98% !important; 
+                                        background: #E6F2C3;
+                                        border: 1px solid #B3D9FF;
+                                        height:68px;">
+
+
+
+                                                    <div class="row">
+
+
+                                                        <div class="col-md-3">
+                                                            <input class="col-md-1" type="checkbox" formControlName="isChecked" (change)="checkOne(tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isChecked.value)">
+                                                            <span style="margin-top: 7px;">{{tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.columnName.value}}</span>
+                                                            &nbsp;
+                                                            <span class="primaryClass" style="margin-top: 7px;" *ngIf="tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.constraintsType.value === 'PRIMARY KEY'">P_KEY</span>
+                                                            &nbsp;
+                                                            <span class="refDatClass" style="margin-top: 7px;" *ngIf="tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.constraintsType.value === 'FOREIGN KEY'">Ref</span>
+
+                                                        </div>
+
+                                                        <div class="col-md-1">
+                                                            <button class="btn btn-sm custom-button" (click)="getRefTableDetailsIndexWise(i)" style="margin-top: 7px;" *ngIf="!tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isSaved.value">
+                                                                <i class="fa fa-plus-square" tooltip="Add Relationship."></i>
+                                                            </button>
+                                                        </div>
+
+                                                        <div class="col-md-2">
+                                                            <select class="form-control form-control-sm" style="margin-top: 7px;" formControlName="relationShipTableName" *ngIf="!tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isSaved.value && refTableListsArray[i].length > 0"
+                                                                (change)="getPrimaryKeycolumnsName(tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.relationShipTableName.value,i)">
+                                                                <option selected value="">Select Reference Table Name</option>
+                                                                <option *ngFor="let table of refTableListsArray[i]" [value]="table">{{table}}</option>
+                                                            </select>
+
+                                                            <input disabled class="form-control form-control-sm" style="margin-top: 7px;" *ngIf="tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isSaved.value"
+                                                                formControlName="relationShipTableName">
+
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <select class="form-control form-control-sm" style="margin-top: 7px;" *ngIf="!tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isSaved.value && refTableColumnsList[i].length > 0"
+                                                                (change)="selectMappedColumnsAfterRefselect(tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.primaryTableColumnName.value,i)"
+                                                                formControlName="primaryTableColumnName">
+                                                                <option selected value="">Select Primary Column Name</option>
+                                                                <option *ngFor="let table of refTableColumnsList[i]" [value]="table">{{table}}</option>
+                                                            </select>
+
+                                                            <input disabled class="form-control form-control-sm" style="margin-top: 7px;" *ngIf="tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isSaved.value"
+                                                                formControlName="primaryTableColumnName">
+
+                                                        </div>
+
+                                                        <div class="col-md-3" *ngIf="mappedColumnNames[i].length > 0">
+                                                            <angular2-multiselect [data]="mappedColumnNames[i]" [settings]="dropdownSettings" [(ngModel)]="selectedItems[i]" formControlName="mappedColumns">
+                                                            </angular2-multiselect>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+        </form>
+    </div>
+
+    <p-footer>
+        <div class="row">
+            <div class="col-md-8"></div>
+            <div class="col-md-4">
+                <button class="btn btn-sm btn-success pull-right" (click)="saveTableConfigurations()">Save</button>
+                <button class="btn btn-sm btn-outline-danger pull-right" style=" margin-right: 5px;" (click)="goToHome()">Cancel</button>
+            </div>
+        </div>
+    </p-footer>
+</p-panel>

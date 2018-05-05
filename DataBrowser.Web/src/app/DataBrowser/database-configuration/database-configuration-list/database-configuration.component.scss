@@ -1,0 +1,17 @@
+.cursor-pointer{
+    cursor: pointer;
+}
+
+:host >>> .tooltip-inner {
+    background-color: #009688;
+    color: #fff;
+  }
+  :host >>> .tooltip.top .tooltip-arrow:before,
+  :host >>> .tooltip.top .tooltip-arrow {
+    border-top-color: #009688;
+  }
+
+  i .customClass{
+    background-color: #009688;
+    color: #fff;
+  }
