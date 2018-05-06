@@ -11,6 +11,7 @@ import { BsModalService, BsModalRef } from "ngx-bootstrap";
 import { AlertDialogComponent } from "../../../shared/component/dialoges/alerts-dialog/alert-dialog.component";
 import { TableConfigurationApiService } from "../table-configuration-api.service";
 import { CoreFormValidation } from "../../../core/core-form-validation.service";
+import { TableConfigurationService } from "../table-configuration.service";
 
 
 
@@ -25,13 +26,11 @@ export class TableConfigurationCreateComponent implements OnInit {
 
     tableConfigCreateForm: FormGroup;
     tableLists: Array<string> = [];
-
     connectionId: number;
     tableDetailsList: Array<TableDetailServiceModel> = [];
 
     primaryKeyColumnLists: Array<string> = [];
     dropdownSettings: Object;
-
 
     mappedColumnNames: any = [];
     selectedItems: any = [];
@@ -49,12 +48,11 @@ export class TableConfigurationCreateComponent implements OnInit {
         private modalService: BsModalService,
         private coreToasetrService: CoreToasterService,
         private router: Router,
-        private coreFormValidation: CoreFormValidation
+        private coreFormValidation: CoreFormValidation,
+        private tableConfigurationService: TableConfigurationService
     ) {
     }
 
-
-    //logic
     ngOnInit(): void {
         this.route.params.subscribe(params => {
             let dataToFilter = new DataBaseNameFilterServiceModel();
@@ -64,8 +62,7 @@ export class TableConfigurationCreateComponent implements OnInit {
             dataToFilter.isView = false;
             this.getTableLists(dataToFilter);
         });
-
-        this.initializeForm();
+        this.tableConfigCreateForm = this.tableConfigurationService.initializeTableConfigurationForm();
         this.dropdownSettings = {
             text: "Select Display Columns",
             selectAllText: 'Select All',
@@ -74,72 +71,10 @@ export class TableConfigurationCreateComponent implements OnInit {
             maxHeight: 160,
             badgeShowLimit: 2
         };
-
-        // this.tableConfigCreateForm.controls['tableDetailsArray'].valueChanges.subscribe(
-        //     (selectedValue) => {
-        //         console.log(selectedValue);
-        //     }
-        // );
     }
-
-    //logic
-    initializeForm = () => {
-        this.tableConfigCreateForm = this.fBuilder.group({
-            name: ['', Validators.required,],
-            dataKey: ['', Validators.required],
-            masterTableName: ['', Validators.required],
-            isTable: [true],
-            isView: [],
-            tableDetailsArray: this.fBuilder.array([]),
-
-        });
-    }
-
-    //logic
-    initializeFormArray = () => {
-        return this.fBuilder.group({
-            columnName: [''],
-            alias: [''],
-            constraintsType: [''],
-            relationShipTableName: [''],
-            primaryTableColumnName: [''],
-            isSaved: [''],
-            mappedColumns: [[]],
-            isChecked: [],
-        });
-    }
-
-    //logic
-    checkBoxEventTable() {
+    checkBoxEvent(whichOne: string) {
         this.tableDetailsList = [];
-        this.tableConfigCreateForm.controls['masterTableName'].patchValue('');
-        if (this.tableConfigCreateForm.controls['isTable'].value) {
-            this.tableConfigCreateForm.controls['isView'].setValue(false);
-            this.tableConfigCreateForm.controls['isTable'].setValue(true);
-        } else {
-            this.tableConfigCreateForm.controls['isView'].setValue(true);
-            this.tableConfigCreateForm.controls['isTable'].setValue(false);
-        }
-
-        let dataToFilter = new DataBaseNameFilterServiceModel();
-        dataToFilter.isTable = this.tableConfigCreateForm.controls['isTable'].value;
-        dataToFilter.isView = this.tableConfigCreateForm.controls['isView'].value;
-        dataToFilter.connectionId = this.connectionId;
-
-        this.getTableLists(dataToFilter);
-    }
-
-    //logic
-    checkBoxEventView() {
-        this.tableDetailsList = [];
-        this.tableConfigCreateForm.controls['masterTableName'].patchValue('');
-        if (this.tableConfigCreateForm.controls['isView'].value) {
-            this.tableConfigCreateForm.controls['isView'].setValue(true);
-            this.tableConfigCreateForm.controls['isTable'].setValue(false);
-        } else {
-            this.tableConfigCreateForm.controls['isView'].setValue(false);
-            this.tableConfigCreateForm.controls['isTable'].setValue(true);
-        }
+        this.tableConfigurationService.checkBoxSettings(whichOne.toLowerCase(), this.tableConfigCreateForm, this.connectionId);
         let dataToFilter = new DataBaseNameFilterServiceModel();
         dataToFilter.isTable = this.tableConfigCreateForm.controls['isTable'].value;
         dataToFilter.isView = this.tableConfigCreateForm.controls['isView'].value;
@@ -150,70 +85,30 @@ export class TableConfigurationCreateComponent implements OnInit {
     getTableLists = (dataToFilter: DataBaseNameFilterServiceModel) => {
         this.tableConfigurationApiService.getTableNamesFromDatabase(dataToFilter)
             .subscribe(data => {
-                this.tableLists = data;
                 if (this.coreService.isNullOrUndefined(data) || data.length === 0) {
                     let message = (dataToFilter.isTable) ? 'There are no table' : 'There are no view';
                     this.coreService.alertDialog(message);
                 }
+                else {
+                    this.tableLists = data;
+                }
             });
     }
 
-    getDetailsOfSelecredTabels = (tableName: string) => {
+    getDetailsOfSelectedTabels = (tableName: string) => {
         if (tableName === "" || this.coreService.isNullOrUndefined(tableName)) {
             this.coreToasterService.showError("Something are going Wrong Table name is not find");
         } else {
             let tablefilter = new IdNameServiceModel();
-            tablefilter = {
-                id: this.connectionId,
-                name: tableName
-            };
+            tablefilter = { id: this.connectionId, name: tableName };
             this.tableConfigurationApiService.getTableDetails(tablefilter)
                 .subscribe(data => {
                     this.tableDetailsList = data;
-
                     if (this.tableDetailsList.length > 0) {
-                        (<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']) = this.fBuilder.array([]);
-                        let counter = 0;
-                        this.tableDetailsList.forEach(table => {
-                            this.refTableListsArray[counter] = [];
-                            this.refTableColumnsList[counter] = [];
-                            this.mappedColumnNames[counter] = [];
-                            this.selectedItems[counter] = [];
-
-                            const fb = this.initializeFormArray();
-                            fb.controls['columnName'].patchValue(table.columnName);
-                            fb.controls['relationShipTableName'].patchValue(table.relationShipTableName);
-                            fb.controls['constraintsType'].patchValue(table.constraintsType);
-                            fb.controls['primaryTableColumnName'].patchValue(table.primaryTableColumnName);
-                            fb.controls['isChecked'].setValue(false);
-
-                            if (table.primaryTableColumnName !== '' && table.primaryTableColumnName !== null && table.primaryTableColumnName !== undefined)
-                                fb.controls['isSaved'].setValue(true);
-                            else
-                                fb.controls['isSaved'].setValue(false);
-                            (<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).push(fb);
-                            counter++;
-                        });
-
+                        this.initializeArrays();
+                        this.tableConfigurationService.patchValueOfFormData(this.tableConfigCreateForm, this.tableDetailsList);
                         //assign data which have allready relationship created for mappdColumnDropdown
-                        for (let i = 0; i < this.tableDetailsList.length; i++) {
-                            if (this.tableDetailsList[i].relationShipTableName !== '') {
-                                let columnFilter = new IdNameServiceModel();
-                                columnFilter = {
-                                    id: this.connectionId,
-                                    name: this.tableDetailsList[i].relationShipTableName
-                                };
-                                this.tableConfigurationApiService.getPrimaryKeyTableColumnName(columnFilter)
-                                    .subscribe(data => {
-                                        this.primaryKeyColumnLists = data;
-                                        this.refTableColumnsList[i] = this.primaryKeyColumnLists;
-                                        if (this.tableDetailsList[i].primaryTableColumnName !== '' && !this.coreService.isNullOrUndefined(this.tableDetailsList[i].primaryTableColumnName)) {
-                                            this.selectMappedColumnsAfterRefselect(this.tableDetailsList[i].primaryTableColumnName, i);
-                                        }
-                                    });
-                            }
-                        }
-
+                        this.assignDataForMappedColumns();
                     } else {
                         this.coreService.alertDialog('No columns found....');
                     }
@@ -251,61 +146,28 @@ export class TableConfigurationCreateComponent implements OnInit {
         });
     }
     checkAll = () => {
-        (<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls.forEach(ctrl => {
-            if (this.isCheckedAll)
-                (<FormGroup>ctrl).controls['isChecked'].setValue(true);
-            else
-                (<FormGroup>ctrl).controls['isChecked'].setValue(false);
-        });
+        this.tableConfigurationService.checkAll(this.tableConfigCreateForm, this.isCheckedAll);
     }
     checkOne = (isChecked: boolean) => {
-        if (isChecked) {
-            let lengthOfArry = (<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).length;
-            let isCheckedLength = (<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls.filter(ctrl => { return (<FormGroup>ctrl).controls['isChecked'].value == true; }).length;
-            this.isCheckedAll = (lengthOfArry === isCheckedLength);
-        } else {
-            this.isCheckedAll = false;
-        }
+        this.isCheckedAll = this.tableConfigurationService.checkOne(this.tableConfigCreateForm, isChecked);
     }
     goToHome = () => {
         this.router.navigate(['/table-configuration']);
     }
     saveTableConfigurations = () => {
-        debugger;
         if (this.tableConfigCreateForm.invalid) {
             this.coreFormValidation.formValidate(this.tableConfigCreateForm, false);
         } else {
-            // validate FormArry for
-            let error: Array<string> = [];
-            let counter = 0;
-            (<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls.forEach(cntrl => {
-                counter = counter + 1;
-                if (cntrl instanceof FormGroup) {
-                    if (cntrl.controls['relationShipTableName'] instanceof FormControl) {
-                        if (!this.coreService.isNullOrUndefined(cntrl.controls['relationShipTableName'].value) && cntrl.controls['relationShipTableName'].value !== '') {
-                            if (this.coreService.isNullOrUndefined(cntrl.controls['primaryTableColumnName'].value) || cntrl.controls['primaryTableColumnName'].value === '') {
-                                let err = "Reference Column Name " + counter + " is required";
-                                error.push(err);
-                            }
-                        }
-                    }
-                }
-            });
+            // validate FormArry ,If relationship table is selected then others are required
+            let error: Array<string> = this.tableConfigurationService.additionalValidationOfFormSaveTime(this.tableConfigCreateForm);
             if (error.length !== 0) {
                 let modelRef: BsModalRef = this.modalService.show(AlertDialogComponent)
                 modelRef.content.errorMessages = error;
             }
             else {
-                //get tableconfiguration Details
-                let tableConfigurationDetails = new TableConfigurationDetails();
-                tableConfigurationDetails = {
-                    name: this.tableConfigCreateForm.controls['name'].value,
-                    dataKey: this.tableConfigCreateForm.controls['dataKey'].value,
-                    masterTableName: this.tableConfigCreateForm.controls['masterTableName'].value,
-                    isTable: this.tableConfigCreateForm.controls['isTable'].value,
-                    isView: this.tableConfigCreateForm.controls['isView'].value,
-                    connectionId: this.connectionId
-                }
+                //get tableconfiguration Details from form
+                let tableConfigurationDetails = this.tableConfigurationService.getTableConfigurationDetailsFromForm(this.tableConfigCreateForm, this.connectionId);
+
                 //Get Details of Fields 
                 let fieldConfigurationDetails: FieldConfigurtionDetails[] = [];
                 (<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls.forEach(ctrl => {
@@ -323,19 +185,46 @@ export class TableConfigurationCreateComponent implements OnInit {
                         fieldConfigurationDetails.push(dataToPush);
                     }
                 });
+
                 if (fieldConfigurationDetails.length === 0) {
                     this.coreService.alertDialog("Please Select atleast one field..");
                 } else {
                     let tableAndFieldConfigurations = new TableConfigAndFieldConfigurationsDetails();
                     tableAndFieldConfigurations.tableConfiguration = tableConfigurationDetails;
                     tableAndFieldConfigurations.fieldConfiguration = fieldConfigurationDetails;
-
                     this.tableConfigurationApiService.saveTableConfigurationDetails(tableAndFieldConfigurations)
                         .subscribe(data => {
                             this.coreToasetrService.showSuccess(data);
                             this.router.navigate(['/table-configuration']);
                         });
                 }
+            }
+        }
+    }
+
+    //Initializing Arrays
+    private initializeArrays = () => {
+        for (let i = 0; i < this.tableDetailsList.length; i++) {
+            this.refTableListsArray[i] = [];
+            this.refTableColumnsList[i] = [];
+            this.mappedColumnNames[i] = [];
+            this.selectedItems[i] = [];
+        }
+    }
+    ///ASssign those data which have allready relationship created for Mapped columns
+    private assignDataForMappedColumns = () => {
+        for (let i = 0; i < this.tableDetailsList.length; i++) {
+            if (this.tableDetailsList[i].relationShipTableName !== '') {
+                let columnFilter = new IdNameServiceModel();
+                columnFilter = { id: this.connectionId, name: this.tableDetailsList[i].relationShipTableName };
+                this.tableConfigurationApiService.getPrimaryKeyTableColumnName(columnFilter)
+                    .subscribe(data => {
+                        this.primaryKeyColumnLists = data;
+                        this.refTableColumnsList[i] = this.primaryKeyColumnLists;
+                        if (this.tableDetailsList[i].primaryTableColumnName !== '' && !this.coreService.isNullOrUndefined(this.tableDetailsList[i].primaryTableColumnName)) {
+                            this.selectMappedColumnsAfterRefselect(this.tableDetailsList[i].primaryTableColumnName, i);
+                        }
+                    });
             }
         }
     }

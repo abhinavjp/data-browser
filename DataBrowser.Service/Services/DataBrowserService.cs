@@ -44,17 +44,17 @@ namespace DataBrowser.Service.Services
                 }
                 //get connection related Details
                 int connectionId = fieldDetailsFilterModel.ConnectionId;
-                var connectionDetails = new DataBaseConnection();
+                var connectionDetails = new DatabaseConnection();
                 var paginations = fieldDetailsFilterModel.PageSize * (fieldDetailsFilterModel.PageNumber - 1);
 
-                using (var repo = new RepositoryPattern<DataBaseConnection>())
+                using (var repo = new RepositoryPattern<DatabaseConnection>())
                 {
                     connectionDetails = repo.SelectByID(connectionId);
                 }
                 List<FieldConfiguration> fieldConfigurationDetails = new List<FieldConfiguration>();
                 using (var repo = new RepositoryPattern<FieldConfiguration>())
                 {
-                    fieldConfigurationDetails = repo.SelectAll().Where(a => a.SourceTableName == fieldDetailsFilterModel.MasterTableName).ToList();
+                    fieldConfigurationDetails = repo.SelectAll().Where(a => a.TableConfigId == fieldDetailsFilterModel.Id).ToList();
                 }
                 var fieldMappingDetails = fieldConfigurationDetails.
                                    Where(c => c.FieldMappingConfigurations.Any()).
@@ -70,12 +70,12 @@ namespace DataBrowser.Service.Services
                         .Select(c => new Temporurly { TableName = c.Key, Values = c.ToList() }).ToList();
                 }
                 string selectQuery = GetSelectQueryDetails(fieldDetailsFilterModel.MasterTableName, fieldConfigurationDetails, fieldMappingDetails.ToList());
-                string leftJoinQuery = GetLeftJoinQueryDetails(fieldDetailsWithGroupBy);
+                string leftJoinQuery = GetLeftJoinQueryDetails(fieldDetailsWithGroupBy,fieldDetailsFilterModel.MasterTableName);
                 string totalCount = "SELECT COUNT(*) AS [TotalCount] FROM " + fieldDetailsFilterModel.MasterTableName;
 
                 string query = selectQuery + " " + leftJoinQuery + " ORDER BY [" + fieldDetailsFilterModel.MasterTableName + "].Id OFFSET " + paginations + " ROWS FETCH NEXT " + fieldDetailsFilterModel.PageSize + " ROWS ONLY  " + totalCount;
 
-                string connectionString = "server= " + connectionDetails.ServerInstanceName + ";Initial Catalog=" + connectionDetails.DataBaseName + " ;uid=" + connectionDetails.UserName + ";pwd=" + connectionDetails.Password + ";";
+                string connectionString = "server= " + connectionDetails.ServerInstanceName + ";Initial Catalog=" + connectionDetails.DatabaseName + " ;uid=" + connectionDetails.UserName + ";pwd=" + connectionDetails.Password + ";";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
@@ -98,7 +98,7 @@ namespace DataBrowser.Service.Services
             }
 
         }
-        private string GetLeftJoinQueryDetails(List<Temporurly> fieldsWIthGroupBy)
+        private string GetLeftJoinQueryDetails(List<Temporurly> fieldsWIthGroupBy,string masterTableName)
         {
             string leftJoinQuery = string.Empty;
             if (fieldsWIthGroupBy.Any())
@@ -111,7 +111,7 @@ namespace DataBrowser.Service.Services
                                        //Make query without 'AND'
                                        a.Values.ForEach(q =>
                                       {
-                                          qu = @"[" + q.SourceTableName + @"]." + q.SourceColumnName + @" = [" + q.ReferenceTableName + @"]." + q.ReferenceColumnName;
+                                          qu = @"[" + masterTableName + @"]." + q.SourceColumnName + @" = [" + q.ReferenceTableName + @"]." + q.ReferenceColumnName;
                                       });
                                    }
                                    else
@@ -122,11 +122,11 @@ namespace DataBrowser.Service.Services
                                            var d = string.Empty;
                                            if (q.Equals(lastItem))
                                            {
-                                               d = @"[" + q.SourceTableName + @"]." + q.SourceColumnName + @" = [" + q.ReferenceTableName + @"]." + q.ReferenceColumnName;
+                                               d = @"[" + masterTableName + @"]." + q.SourceColumnName + @" = [" + q.ReferenceTableName + @"]." + q.ReferenceColumnName;
                                            }
                                            else
                                            {
-                                               d = @"[" + q.SourceTableName + @"]." + q.SourceColumnName + @" = [" + q.ReferenceTableName + @"]." + q.ReferenceColumnName + " AND ";
+                                               d = @"[" + masterTableName + @"]." + q.SourceColumnName + @" = [" + q.ReferenceTableName + @"]." + q.ReferenceColumnName + " AND ";
                                            }
                                            qu += d;
                                        });
@@ -149,7 +149,7 @@ namespace DataBrowser.Service.Services
         private string GetSourcecolumnDetails(string masterTable, List<FieldConfiguration> fieldsConfigDetails)
         {
             List<string> displayColumns = new List<string>();
-            displayColumns = fieldsConfigDetails.Select(a => "[" + a.SourceTableName + "]." + a.SourceColumnName).ToList();
+            displayColumns = fieldsConfigDetails.Select(a => "[" + masterTable + "]." + a.SourceColumnName).ToList();
             var fieldWithCommaSaperators = String.Join(",", displayColumns);
             return fieldWithCommaSaperators;
         }
@@ -166,10 +166,5 @@ namespace DataBrowser.Service.Services
         public string TableName { get; set; }
         public List<FieldConfiguration> Values { get; set; }
     }
-
-    public class ReturnTable
-    {
-        public DataSet MainTable { get; set; }
-        public int CountTable { get; set; }
-    }
+    
 }

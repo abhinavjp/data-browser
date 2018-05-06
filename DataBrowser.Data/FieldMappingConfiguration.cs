@@ -46,12 +46,6 @@ namespace DataBrowser.Data
         [Display(Name = "Field configuration ID")]
         public int? FieldConfigurationId { get; set; } // FieldConfigurationId
 
-        [Column(@"MasterTableName", Order = 5, TypeName = "varchar")]
-        [MaxLength(50)]
-        [StringLength(50)]
-        [Display(Name = "Master table name")]
-        public string MasterTableName { get; set; } // MasterTableName (length: 50)
-
         // Foreign keys
 
         /// <summary>

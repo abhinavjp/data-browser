@@ -43,19 +43,22 @@ export class CoreHttpService {
         let errors = (!this.coreService.isNullOrUndefined(error.error.exceptionMessage)) ? error.error.exceptionMessage : error.error.message;
         let error1: string = '';
         let error2: string = '';
-
-        this.loderService.display(false);
+        let errorStatus = (error.statusText === "Unknown Error") ? "errors" : error.statusText;
         
-        if (!this.coreService.isNullOrUndefined(error.error.innerException) && error.error.innerException.exceptionMessage! == '') {
+        this.loderService.display(false);
+
+        if (error.status === 0) {
+            errors = "You are offline!";
+        }
+        else if (!this.coreService.isNullOrUndefined(error.error.innerException) && error.error.innerException.exceptionMessage! == '') {
             error1 = error.error.innerException.exceptionMessage;
 
             if (!this.coreService.isNullOrUndefined(error.error.innerException.innerException) && error.error.innerException.innerException.exceptionMessage !== '') {
                 error2 = error.error.innerException.innerException.exceptionMessage;
             }
         }
-        
-        
-        this.coreService.exceptionDialog(error.statusText, errors, error1, error2);
+
+        this.coreService.exceptionDialog(errorStatus, errors, error1, error2);
         return Observable.throw(error.message);
     }
 }

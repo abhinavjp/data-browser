@@ -54,7 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataBaseConnection.cs">
+    <Compile Include="DatabaseConnection.cs">
       <DependentUpon>DataBrowserTest.tt</DependentUpon>
     </Compile>
     <Compile Include="DataBrowserDbContext.cs">

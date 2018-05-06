@@ -19,7 +19,7 @@ namespace DataBrowser.Service.Services
         {
             try
             {
-                using (var repo = new RepositoryPattern<DataBaseConnection>())
+                using (var repo = new RepositoryPattern<DatabaseConnection>())
                 {
                     List<DataBaseConnectionServiceModel> dataBaseConnection = new List<DataBaseConnectionServiceModel>();
                     var result = repo.SelectAll().ToList();
@@ -69,9 +69,9 @@ namespace DataBrowser.Service.Services
                 {
 
                 }
-                using (var dataBaseRepo = new RepositoryPattern<DataBaseConnection>())
+                using (var dataBaseRepo = new RepositoryPattern<DatabaseConnection>())
                 {
-                    var data = Mapper.Map<DataBaseConnection>(dataBaseConnection);
+                    var data = Mapper.Map<DatabaseConnection>(dataBaseConnection);
                     dataBaseRepo.Insert(data);
                     dataBaseRepo.Save();
                 }
@@ -90,7 +90,7 @@ namespace DataBrowser.Service.Services
                 {
                     // retirn exception
                 }
-                using (var dataBaseRepo = new RepositoryPattern<DataBaseConnection>())
+                using (var dataBaseRepo = new RepositoryPattern<DatabaseConnection>())
                 {
                     dataBaseRepo.Delete(id);
                     dataBaseRepo.Save();

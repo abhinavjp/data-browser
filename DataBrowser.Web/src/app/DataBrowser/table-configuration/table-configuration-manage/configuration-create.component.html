@@ -35,7 +35,7 @@
                     <div class="col-md-1">
                         <span class="col-md-4">Table</span>
                         <label class="switch" style=" margin-top:15px;">
-                            <input type="checkbox" formControlName="isTable" (change)="checkBoxEventTable()">
+                            <input type="checkbox" formControlName="isTable" (change)="checkBoxEvent('Table')">
                             <span class="slider round"></span>
                         </label>
                     </div>
@@ -43,7 +43,7 @@
                     <div class="col-md-1">
                         <span class="col-md-4">View</span>
                         <label class="switch" style=" margin-top:15px;">
-                            <input type="checkbox" formControlName="isView" (change)="checkBoxEventView()">
+                            <input type="checkbox" formControlName="isView" (change)="checkBoxEvent('view')">
                             <span class="slider round"></span>
                         </label>
                     </div>
@@ -52,7 +52,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="password fornts">Master Table</label>
-                            <select class="form-control form-control-sm" formControlName="masterTableName" (change)="getDetailsOfSelecredTabels(tableConfigCreateForm.controls['masterTableName'].value)"
+                            <select class="form-control form-control-sm" formControlName="masterTableName" (change)="getDetailsOfSelectedTabels(tableConfigCreateForm.controls['masterTableName'].value)"
                                 required>
                                 <option disabled selected value="">Select Master Table</option>
                                 <option *ngFor="let table of tableLists">{{table}}</option>

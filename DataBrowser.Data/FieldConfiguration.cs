@@ -30,31 +30,25 @@ namespace DataBrowser.Data
         [Display(Name = "Id")]
         public int Id { get; set; } // Id (Primary key)
 
-        [Column(@"SourceTableName", Order = 2, TypeName = "varchar")]
-        [MaxLength(50)]
-        [StringLength(50)]
-        [Display(Name = "Source table name")]
-        public string SourceTableName { get; set; } // SourceTableName (length: 50)
-
-        [Column(@"SourceColumnName", Order = 3, TypeName = "varchar")]
+        [Column(@"SourceColumnName", Order = 2, TypeName = "varchar")]
         [MaxLength(50)]
         [StringLength(50)]
         [Display(Name = "Source column name")]
         public string SourceColumnName { get; set; } // SourceColumnName (length: 50)
 
-        [Column(@"ReferenceTableName", Order = 4, TypeName = "varchar")]
+        [Column(@"ReferenceTableName", Order = 3, TypeName = "varchar")]
         [MaxLength(50)]
         [StringLength(50)]
         [Display(Name = "Reference table name")]
         public string ReferenceTableName { get; set; } // ReferenceTableName (length: 50)
 
-        [Column(@"ReferenceColumnName", Order = 5, TypeName = "varchar")]
+        [Column(@"ReferenceColumnName", Order = 4, TypeName = "varchar")]
         [MaxLength(50)]
         [StringLength(50)]
         [Display(Name = "Reference column name")]
         public string ReferenceColumnName { get; set; } // ReferenceColumnName (length: 50)
 
-        [Column(@"TableConfigId", Order = 6, TypeName = "int")]
+        [Column(@"TableConfigId", Order = 5, TypeName = "int")]
         [Display(Name = "Table config ID")]
         public int? TableConfigId { get; set; } // TableConfigId
 

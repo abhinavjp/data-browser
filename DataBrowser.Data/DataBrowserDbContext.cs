@@ -21,7 +21,7 @@ namespace DataBrowser.Data
     [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.36.1.0")]
     public partial class DataBrowserDbContext : System.Data.Entity.DbContext, IDataBrowserDbContext
     {
-        public System.Data.Entity.DbSet<DataBaseConnection> DataBaseConnections { get; set; } // DataBaseConnection
+        public System.Data.Entity.DbSet<DatabaseConnection> DatabaseConnections { get; set; } // DatabaseConnection
         public System.Data.Entity.DbSet<FieldConfiguration> FieldConfigurations { get; set; } // FieldConfiguration
         public System.Data.Entity.DbSet<FieldMappingConfiguration> FieldMappingConfigurations { get; set; } // FieldMappingConfiguration
         public System.Data.Entity.DbSet<TableConfiguration> TableConfigurations { get; set; } // TableConfiguration
@@ -80,7 +80,7 @@ namespace DataBrowser.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.Configurations.Add(new DataBaseConnectionConfiguration());
+            //modelBuilder.Configurations.Add(new DatabaseConnectionConfiguration());
             //modelBuilder.Configurations.Add(new FieldConfigurationConfiguration());
             //modelBuilder.Configurations.Add(new FieldMappingConfigurationConfiguration());
             //modelBuilder.Configurations.Add(new TableConfigurationConfiguration());
@@ -90,7 +90,7 @@ namespace DataBrowser.Data
 
         public static System.Data.Entity.DbModelBuilder CreateModel(System.Data.Entity.DbModelBuilder modelBuilder, string schema)
         {
-            //modelBuilder.Configurations.Add(new DataBaseConnectionConfiguration(schema));
+            //modelBuilder.Configurations.Add(new DatabaseConnectionConfiguration(schema));
             //modelBuilder.Configurations.Add(new FieldConfigurationConfiguration(schema));
             //modelBuilder.Configurations.Add(new FieldMappingConfigurationConfiguration(schema));
             //modelBuilder.Configurations.Add(new TableConfigurationConfiguration(schema));

@@ -7,9 +7,8 @@ export class DatabaseConfigurationService {
 
     constructor(
         private fBuilder: FormBuilder,
-    ) {
-
-    }
+    ) { }
+ 
     initializeDatabaseConnectionFormControls = () => {
         return this.fBuilder.group({
             name: ['', Validators.required],

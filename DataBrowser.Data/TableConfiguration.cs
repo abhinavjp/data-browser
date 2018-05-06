@@ -42,21 +42,17 @@ namespace DataBrowser.Data
         [Display(Name = "Data key")]
         public string DataKey { get; set; } // DataKey (length: 50)
 
-        [Column(@"IsTable", Order = 4, TypeName = "bit")]
-        [Display(Name = "Is table")]
-        public bool? IsTable { get; set; } // IsTable
-
-        [Column(@"IsView", Order = 5, TypeName = "bit")]
+        [Column(@"IsView", Order = 4, TypeName = "bit")]
         [Display(Name = "Is view")]
         public bool? IsView { get; set; } // IsView
 
-        [Column(@"MasterTableName", Order = 6, TypeName = "varchar")]
+        [Column(@"MasterTableName", Order = 5, TypeName = "varchar")]
         [MaxLength(50)]
         [StringLength(50)]
         [Display(Name = "Master table name")]
         public string MasterTableName { get; set; } // MasterTableName (length: 50)
 
-        [Column(@"ConnectionId", Order = 7, TypeName = "int")]
+        [Column(@"ConnectionId", Order = 6, TypeName = "int")]
         [Display(Name = "Connection ID")]
         public int? ConnectionId { get; set; } // ConnectionId
 
@@ -70,9 +66,9 @@ namespace DataBrowser.Data
         // Foreign keys
 
         /// <summary>
-        /// Parent DataBaseConnection pointed by [TableConfiguration].([ConnectionId]) (FK_TableConfiguration_DataBaseConnection)
+        /// Parent DatabaseConnection pointed by [TableConfiguration].([ConnectionId]) (FK_TableConfiguration_DataBaseConnection)
         /// </summary>
-        [ForeignKey("ConnectionId")] public virtual DataBaseConnection DataBaseConnection { get; set; } // FK_TableConfiguration_DataBaseConnection
+        [ForeignKey("ConnectionId")] public virtual DatabaseConnection DatabaseConnection { get; set; } // FK_TableConfiguration_DataBaseConnection
     }
 
 }

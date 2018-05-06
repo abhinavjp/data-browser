@@ -106,7 +106,7 @@
     //{
     //    // Create custom ("Singular", "Plural") forms for one-off words as needed.
     //    new CustomPluralizationEntry("Course", "Courses"),
-			new CustomPluralizationEntry("DataBaseConnection", "DataBaseConnections");
+			new CustomPluralizationEntry("DatabaseConnection", "DatabaseConnections");
     //    new CustomPluralizationEntry("Status", "Status") // Use same value to prevent pluralisation
     //});
 

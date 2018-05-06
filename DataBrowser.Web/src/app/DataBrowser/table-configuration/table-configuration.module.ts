@@ -11,6 +11,7 @@ import { TableConfigurationComponent } from './table-confiruration-list/table-co
 import { MultiSelectModule } from 'primeng/multiselect';
 import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown/multiselect.component';
 import { DataBaseConnectionNameResolver, TableConfigurationApiService } from './table-configuration-api.service';
+import { TableConfigurationService } from './table-configuration.service';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { DataBaseConnectionNameResolver, TableConfigurationApiService } from './
     entryComponents: [],
     providers: [
         TableConfigurationApiService,
-        DataBaseConnectionNameResolver
+        DataBaseConnectionNameResolver,
+        TableConfigurationService
     ],
 })
 export class TableConfigurationModule {

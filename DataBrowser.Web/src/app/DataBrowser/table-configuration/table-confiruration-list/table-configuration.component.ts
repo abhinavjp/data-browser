@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Dropdown } from "primeng/dropdown";
 import * as _ from 'lodash';
-import { IdNameServiceModel, DropdownModel, TableConfigurationDetails } from "../table-configuration.class";
+import { IdNameServiceModel, DropdownModel, TableConfigurationDetails, TableListsServiceModel } from "../table-configuration.class";
 import { CoreService } from "../../../core/core.service";
 
 
@@ -26,27 +26,22 @@ export class TableConfigurationComponent implements OnInit {
         private router: Router) {
     }
     ngOnInit(): void {
-        //buisness logic
-        this.route.data.map(data => data.databaseConnectionIdName).subscribe((res) => {
+        this.route.data.map(data => data.databaseConnectionIdName).subscribe((res: TableListsServiceModel) => {
             this.dataBaseConnectionLists = res.idAndName;
-            if (!this.coreService.isNullOrUndefined(res.idAndName)) {
-                _.each(this.dataBaseConnectionLists, list => {
-                    let data = new DropdownModel();
-                    data.label = list.name;
-                    data.value = { id: list.id, name: list.name };
-                    this.dataBaseConnectionbindDropdown.push(data);
-                });
-                this.tableconfigurationLists = res.tableConfigList;
-                _.each(this.tableconfigurationLists,list => {
-                    list.isTable = (this.coreService.isNullOrUndefined(list.isTable)) ? false : list.isTable;
-                    list.isView = (this.coreService.isNullOrUndefined(list.isView)) ? false : list.isView;
-                });
-            } else {
-                this.dataBaseConnectionLists = res;
-            }
+            this.assignDropDownData(res.idAndName);
+            this.tableconfigurationLists = res.tableConfigList;
         });
     }
-
+    assignDropDownData = (idName: Array<IdNameServiceModel>) => {
+        if (!this.coreService.isNullOrUndefined(idName)) {
+            _.each(this.dataBaseConnectionLists, list => {
+                let data = new DropdownModel();
+                data.label = list.name;
+                data.value = { id: list.id, name: list.name };
+                this.dataBaseConnectionbindDropdown.push(data);
+            });
+        }
+    }
     createTableConfiguration() {
         if (this.coreService.isNullOrUndefined(this.selectedDataBaseConnecton)) {
             this.coreService.alertDialog("Please select Database connection first");

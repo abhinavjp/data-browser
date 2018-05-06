@@ -23,7 +23,6 @@ namespace DataBrowser.Data.Repository
             T existing = table.Find(id);
             table.Remove(existing);
         }
-
         public void Dispose()
         {
 
@@ -56,6 +55,10 @@ namespace DataBrowser.Data.Repository
         public void BulkInsert(IEnumerable<T> arry)
         {
             databrowserEntities.BulkInsert<T>(arry);
+        }
+        public void BulkDelete(IEnumerable<T> arry)
+        {
+            databrowserEntities.BulkDelete<T>(arry);
         }
     }
 }

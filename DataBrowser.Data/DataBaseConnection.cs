@@ -17,10 +17,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DataBrowser.Data
 {
 
-    // DataBaseConnection
-    [Table("DataBaseConnection", Schema = "dbo")]
+    // DatabaseConnection
+    [Table("DatabaseConnection", Schema = "dbo")]
     [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.36.1.0")]
-    public partial class DataBaseConnection
+    public partial class DatabaseConnection
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(@"Id", Order = 1, TypeName = "int")]
@@ -56,11 +56,11 @@ namespace DataBrowser.Data
         [Display(Name = "Password")]
         public string Password { get; set; } // Password (length: 50)
 
-        [Column(@"DataBaseName", Order = 6, TypeName = "nvarchar")]
+        [Column(@"DatabaseName", Order = 6, TypeName = "nvarchar")]
         [MaxLength(50)]
         [StringLength(50)]
-        [Display(Name = "Data base name")]
-        public string DataBaseName { get; set; } // DataBaseName (length: 50)
+        [Display(Name = "Database name")]
+        public string DatabaseName { get; set; } // DatabaseName (length: 50)
 
         // Reverse navigation
 

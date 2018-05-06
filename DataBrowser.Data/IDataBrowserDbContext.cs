@@ -19,7 +19,7 @@ namespace DataBrowser.Data
 
     public interface IDataBrowserDbContext : System.IDisposable
     {
-        System.Data.Entity.DbSet<DataBaseConnection> DataBaseConnections { get; set; } // DataBaseConnection
+        System.Data.Entity.DbSet<DatabaseConnection> DatabaseConnections { get; set; } // DatabaseConnection
         System.Data.Entity.DbSet<FieldConfiguration> FieldConfigurations { get; set; } // FieldConfiguration
         System.Data.Entity.DbSet<FieldMappingConfiguration> FieldMappingConfigurations { get; set; } // FieldMappingConfiguration
         System.Data.Entity.DbSet<TableConfiguration> TableConfigurations { get; set; } // TableConfiguration

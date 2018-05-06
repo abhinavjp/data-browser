@@ -20,7 +20,7 @@ namespace DataBrowser.Service.Services
             try
             {
                 List<IdNameServiceModel> dataBaseLists = new List<IdNameServiceModel>();
-                using (var dataBaseConnectionRepo = new RepositoryPattern<DataBaseConnection>())
+                using (var dataBaseConnectionRepo = new RepositoryPattern<DatabaseConnection>())
                 {
                     dataBaseLists = dataBaseConnectionRepo.SelectAll().Select(a => new IdNameServiceModel { Name = a.Name, Id = a.Id }).ToList();
                 }
@@ -51,16 +51,16 @@ namespace DataBrowser.Service.Services
                     return null;
                 }
                 //get Database Name from database connection
-                DataBaseConnection dataBaseDetails;
+                DatabaseConnection dataBaseDetails;
                 List<string> tableNames = new List<string>();
-                using (var dataBaseConnectionRepo = new RepositoryPattern<DataBaseConnection>())
+                using (var dataBaseConnectionRepo = new RepositoryPattern<DatabaseConnection>())
                 {
                     dataBaseDetails = dataBaseConnectionRepo.SelectByID(dataToFilter.ConnectionId);
                 }
                 if (dataBaseDetails == null)
                     return null;
 
-                var connectionString = "server= " + dataBaseDetails.ServerInstanceName + ";Initial Catalog=" + dataBaseDetails.DataBaseName + " ;uid=" + dataBaseDetails.UserName + ";pwd=" + dataBaseDetails.Password + ";";
+                var connectionString = "server= " + dataBaseDetails.ServerInstanceName + ";Initial Catalog=" + dataBaseDetails.DatabaseName + " ;uid=" + dataBaseDetails.UserName + ";pwd=" + dataBaseDetails.Password + ";";
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
@@ -97,9 +97,9 @@ namespace DataBrowser.Service.Services
                 {
                     //return error;
                 }
-                DataBaseConnection dataBaseDetails;
+                DatabaseConnection dataBaseDetails;
                 List<TableDetailsServiceModel> tableDetails = new List<TableDetailsServiceModel>();
-                using (var dataBaseConnectionRepo = new RepositoryPattern<DataBaseConnection>())
+                using (var dataBaseConnectionRepo = new RepositoryPattern<DatabaseConnection>())
                 {
                     dataBaseDetails = dataBaseConnectionRepo.SelectByID(tableFilters.Id);
                 }
@@ -107,7 +107,7 @@ namespace DataBrowser.Service.Services
                 {
                     //return null;
                 }
-                var connectionString = "server= " + dataBaseDetails.ServerInstanceName + ";Initial Catalog=" + dataBaseDetails.DataBaseName + " ;uid=" + dataBaseDetails.UserName + ";pwd=" + dataBaseDetails.Password + ";";
+                var connectionString = "server= " + dataBaseDetails.ServerInstanceName + ";Initial Catalog=" + dataBaseDetails.DatabaseName + " ;uid=" + dataBaseDetails.UserName + ";pwd=" + dataBaseDetails.Password + ";";
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
@@ -196,10 +196,10 @@ namespace DataBrowser.Service.Services
                 {
                     //return exception
                 }
-                DataBaseConnection dataBaseDetails;
+                DatabaseConnection dataBaseDetails;
                 List<string> columnName = new List<string>();
                 List<TableDetailsServiceModel> tableDetails = new List<TableDetailsServiceModel>();
-                using (var dataBaseConnectionRepo = new RepositoryPattern<DataBaseConnection>())
+                using (var dataBaseConnectionRepo = new RepositoryPattern<DatabaseConnection>())
                 {
                     dataBaseDetails = dataBaseConnectionRepo.SelectByID(columnFilter.Id);
                 }
@@ -207,7 +207,7 @@ namespace DataBrowser.Service.Services
                 {
                     //return null;
                 }
-                var connectionString = "server= " + dataBaseDetails.ServerInstanceName + ";Initial Catalog=" + dataBaseDetails.DataBaseName + " ;uid=" + dataBaseDetails.UserName + ";pwd=" + dataBaseDetails.Password + ";";
+                var connectionString = "server= " + dataBaseDetails.ServerInstanceName + ";Initial Catalog=" + dataBaseDetails.DatabaseName + " ;uid=" + dataBaseDetails.UserName + ";pwd=" + dataBaseDetails.Password + ";";
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
@@ -262,7 +262,9 @@ namespace DataBrowser.Service.Services
                 List<FieldMappingConfiguration> fieldMappingConfigurations = new List<FieldMappingConfiguration>();
                 tableAndFieldConfiguration.fieldConfiguration.ForEach(field =>
                                {
-                                   var dataWithId = fieldDetails.FirstOrDefault(a => a.SourceColumnName == field.SourceColumnName && a.SourceTableName == field.SourceTableName && a.ReferenceTableName == field.ReferenceTableName && a.ReferenceColumnName == field.ReferenceColumnName).Id;
+                                   var dataWithId = fieldDetails.FirstOrDefault(a => a.SourceColumnName == field.SourceColumnName
+                                   && a.TableConfigId == field.TableConfigId && a.ReferenceTableName == field.ReferenceTableName
+                                   && a.ReferenceColumnName == field.ReferenceColumnName).Id;
                                    field.Id = dataWithId;
                                });
 
@@ -279,7 +281,6 @@ namespace DataBrowser.Service.Services
                                     FieldConfigurationId = field.Id,
                                     MapColumnName = m,
                                     MapTableName = field.ReferenceTableName,
-                                    MasterTableName = field.SourceTableName
                                 };
                                 fieldMappingConfigurations.Add(mappingDetails);
                             });
@@ -331,7 +332,6 @@ namespace DataBrowser.Service.Services
                          ReferenceColumnName = field.ReferenceColumnName,
                          ReferenceTableName = field.ReferenceTableName,
                          SourceColumnName = field.SourceColumnName,
-                         SourceTableName = field.SourceTableName,
                          TableConfigId = field.TableConfigId,
                          MappedCoumns = field.FieldMappingConfigurations.
                          Where(b => b.FieldConfigurationId == field.Id).Select(n => n.MapColumnName).ToList()
@@ -339,17 +339,20 @@ namespace DataBrowser.Service.Services
                  }).ToList();
 
                 var tableDetails = GetTableDetails(tableConfigDetails.ConnectionId ?? 0);
-
                 var deletedColumns = tableAndFieldConfigurationDetails.fieldConfiguration
-                    .Where(d => !tableDetails.Any(c => c.ColumnName.ToLower() == d.SourceColumnName.ToLower())).ToList();
+                                   .Where(d => !tableDetails.Any(c => c.ColumnName.ToLower() == d.SourceColumnName.ToLower())).ToList();
+                //var insertedColumnsOrNewColumns = tableDetails
+                //    .Where(f => !tableAndFieldConfigurationDetails.fieldConfiguration
+                //    .Any(c => c.SourceColumnName.ToLower() == f.ColumnName.ToLower())).ToList();
 
-                var insertedColumnsOrNewColumns = tableDetails
-                    .Where(f => 
-                    !tableAndFieldConfigurationDetails.fieldConfiguration
-                    .Any(c => c.SourceColumnName.ToLower() == f.ColumnName.ToLower())).ToList();
-
-                //Delete deleted coluns and add aolumns to show at from end for configure
-                
+                if (tableDetails.Any())
+                {
+                    UpdateConstraintTypeAndInsertColumn(tableDetails, tableAndFieldConfigurationDetails.fieldConfiguration);
+                }
+                if (deletedColumns.Any())
+                {
+                    DeleteColumnsIfNeeded(deletedColumns);
+                }
                 return tableAndFieldConfigurationDetails;
             }
             catch (Exception ex)
@@ -357,7 +360,43 @@ namespace DataBrowser.Service.Services
                 throw;
             }
         }
+        private void UpdateConstraintTypeAndInsertColumn(List<TableDetailsServiceModel> tableDetails, List<FieldConfigurationServiceModel> fieldConfigurationDetailsToUpdate)
+        {
+            tableDetails.ForEach(s =>
+            {
+                var updateDetails = fieldConfigurationDetailsToUpdate.FirstOrDefault(d => d.SourceColumnName.ToLower() == s.ColumnName.ToLower());
+                if (updateDetails != null)
+                {
+                    updateDetails.ConstraintsType = s.ConstraintsType;
+                }
+                else
+                {
+                    var insertColumns = new FieldConfigurationServiceModel()
+                    {
+                        SourceColumnName = s.ColumnName,
+                        ReferenceColumnName = s.PrimaryTableColumnName,
+                        ReferenceTableName = s.RelationShipTableName,
+                        ConstraintsType = s.ConstraintsType
+                    };
+                    fieldConfigurationDetailsToUpdate.Add(insertColumns);
+                }
+            });
+        }
 
+        private void DeleteColumnsIfNeeded(List<FieldConfigurationServiceModel> deleteData)
+        {
+            var idsToDelete = deleteData.Select(v => v.Id).ToList();
+            using (var repo = new RepositoryPattern<FieldConfiguration>())
+            {
+                var dataToDelete = repo.SelectAll().Where(v => idsToDelete.Contains(v.Id)).ToList();
+                repo.BulkDelete(dataToDelete);
+            }
+            using (var repo = new RepositoryPattern<FieldMappingConfiguration>())
+            {
+                var dataToDelete = repo.SelectAll().Where(v => idsToDelete.Contains(v.FieldConfigurationId ?? 0)).ToList();
+                repo.BulkDelete(dataToDelete);
+            }
+        }
         private List<TableDetailsServiceModel> GetTableDetails(int connectionId)
         {
             return null;
