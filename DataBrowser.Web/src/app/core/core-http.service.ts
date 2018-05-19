@@ -34,9 +34,12 @@ export class CoreHttpService {
 
     }
     httpDeleteRequest<TRequest, TResponse>(url: string, id?: TRequest): Observable<TResponse> {
+        this.loderService.display(true);
         return this.http.delete(url, id)
-            .map(res => <TResponse>res)
-            .catch(this.customErrorHandlors);
+            .map(res => {
+                this.loderService.display(false);
+                return <TResponse>res
+            }).catch(this.customErrorHandlors);
     }
 
     customErrorHandlors = (error: HttpErrorResponse) => {
@@ -44,20 +47,21 @@ export class CoreHttpService {
         let error1: string = '';
         let error2: string = '';
         let errorStatus = (error.statusText === "Unknown Error") ? "errors" : error.statusText;
-        
+
         this.loderService.display(false);
 
         if (error.status === 0) {
             errors = "You are offline!";
         }
-        else if (!this.coreService.isNullOrUndefined(error.error.innerException) && error.error.innerException.exceptionMessage! == '') {
+        else if (!this.coreService.isNullOrUndefined(error.error.innerException) 
+        && error.error.innerException.exceptionMessage !== '') {
             error1 = error.error.innerException.exceptionMessage;
 
             if (!this.coreService.isNullOrUndefined(error.error.innerException.innerException) && error.error.innerException.innerException.exceptionMessage !== '') {
                 error2 = error.error.innerException.innerException.exceptionMessage;
             }
         }
-
+        debugger;
         this.coreService.exceptionDialog(errorStatus, errors, error1, error2);
         return Observable.throw(error.message);
     }

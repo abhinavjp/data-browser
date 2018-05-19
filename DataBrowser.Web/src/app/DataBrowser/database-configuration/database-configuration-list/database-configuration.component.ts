@@ -8,6 +8,7 @@ import { CoreToasterService } from '../../../core/core-toaster.service';
 import { DataBaseConnectionManagecomponent } from '../database-connection-manage/databaseconnection-manage.component';
 import { ConfirmDialogComponent } from '../../../shared/component/dialoges/confirm-dialog/confirm.component';
 import { DatabaseConfigurationApiService } from '../database-configuration-api.service';
+import { ConfirmationService } from 'primeng/api';
 
 
 @Component({
@@ -25,7 +26,8 @@ export class DataBaseConfigurationComponent implements OnInit {
         private databaseConfigurationApiService: DatabaseConfigurationApiService,
         private route: ActivatedRoute,
         private loaderService: LoaderService,
-        private coreToasterService: CoreToasterService) {
+        private coreToasterService: CoreToasterService,
+        private confirmationService: ConfirmationService) {
     }
 
     ngOnInit(): void {
@@ -47,20 +49,41 @@ export class DataBaseConfigurationComponent implements OnInit {
                 this.rowData = data;
             });
     }
-    deleteDatabaseConnection(id: number, name: string) {
-        let modelRef: BsModalRef = this.modalService.show(ConfirmDialogComponent, { class: 'modal-sm' });
-        modelRef.content.name = name;
-        this.modalService.onHide.subscribe(data => {
-            if (data === 'YES') {
-                this.loaderService.display(true);
+    // deleteDatabaseConnection(id: number, name: string) {
+    //     let modelRef: BsModalRef = this.modalService.show(ConfirmDialogComponent, { class: 'modal-sm' });
+    //     modelRef.content.name = name;
+    //     this.modalService.onHide.subscribe(data => {
+    //         if (data === 'YES') {
+    //             debugger;
+    //             this.databaseConfigurationApiService.deleteDatabaseConnection(id)
+    //                 .subscribe(data => {
+    //                     this.coreToasterService.showSuccess(data);
+    //                     this.getAllDatabaseConnections();
+    //                 });
+    //         } else {
+    //             console.log(data);
+    //         }
+    //     });
+    // }
+
+
+    deleteDatabaseConnection = (id: number, name: string) => {
+        this.confirmationService.confirm({
+            message: 'Do you want to delete ' + name + ' ?',
+            header: 'Delete Confirmation',
+            icon: 'fa fa-trash',
+            accept: () => {
                 this.databaseConfigurationApiService.deleteDatabaseConnection(id)
                     .subscribe(data => {
                         this.coreToasterService.showSuccess(data);
                         this.getAllDatabaseConnections();
                     });
-            } else {
-                console.log(data);
+            },
+            reject: () => {
+                //this.msgs = [{severity:'info', summary:'Rejected', detail:'You have rejected'}];
             }
         });
     }
+
+
 }

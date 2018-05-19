@@ -10,7 +10,8 @@ import { PaginatorModule } from 'primeng/paginator';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { DatabaseConfigurationApiService, DataBaseConnectionResolver } from './database-configuration-api.service';
 import { DatabaseConfigurationService } from './database-configuration.service';
-
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 
 @NgModule({
     imports: [
@@ -20,7 +21,8 @@ import { DatabaseConfigurationService } from './database-configuration.service';
         PaginatorModule,
         ReactiveFormsModule,
         FormsModule,
-        DatabaseConfigurationRouteModule
+        DatabaseConfigurationRouteModule,
+        ConfirmDialogModule
     ],
     declarations: [
         DataBaseConfigurationComponent,
@@ -33,7 +35,8 @@ import { DatabaseConfigurationService } from './database-configuration.service';
     providers: [
         DatabaseConfigurationApiService,
         DataBaseConnectionResolver,
-        DatabaseConfigurationService
+        DatabaseConfigurationService,
+        ConfirmationService
     ],
 })
 export class DatabaseConfigurationModule {
