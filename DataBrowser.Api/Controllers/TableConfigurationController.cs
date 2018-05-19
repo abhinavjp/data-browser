@@ -46,6 +46,17 @@ namespace DataBrowser.Api.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, _tableConfigurationService.SaveTableConfiguraionDetails(tableAndFieldConfiguration));
         }
 
+        [HttpPost]
+        public HttpResponseMessage GetDetailstableAndFieldsById(IdNameServiceModel ids)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, _tableConfigurationService.GetDetailstableAndFieldsById(ids.Id));
+        }
+        [HttpPost]
+        public HttpResponseMessage UpdateTableAndFieldMappingConfiguration(TableAndFieldConfigurationServiceModel tableAndFieldConfiguration)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, _tableConfigurationService.UpdateTableAndfieldconfiguration(tableAndFieldConfiguration));
+        }
+
     }
 
 }

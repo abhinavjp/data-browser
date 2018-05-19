@@ -3,7 +3,7 @@ import { CoreHttpService } from "../../core/core-http.service";
 import { LoaderService } from "../../core/loader.service";
 import { Observable } from "rxjs/Observable";
 import { TableListsServiceModel, DataBaseNameFilterServiceModel, IdNameServiceModel, TableConfigAndFieldConfigurationsDetails, TableDetailServiceModel } from "./table-configuration.class";
-import { Resolve } from "@angular/router";
+import { Resolve, ActivatedRoute, ActivatedRouteSnapshot } from "@angular/router";
 
 @Injectable()
 export class TableConfigurationApiService {
@@ -31,6 +31,12 @@ export class TableConfigurationApiService {
     saveTableConfigurationDetails(tableAndFieldConfiguration: TableConfigAndFieldConfigurationsDetails): Observable<string> {
         return this.coreHttpService.httpPostRequest(this.apiUrl + "TableConfiguration/SaveFieldConfiguration", tableAndFieldConfiguration);
     }
+    getDetailsOfTableAndFieldConfigurationToedit(id: number): Observable<TableConfigAndFieldConfigurationsDetails> {
+        return this.coreHttpService.httpPostRequest(this.apiUrl + "TableConfiguration/GetDetailstableAndFieldsById", { id: id, name: '' });
+    }
+    UpdateTableConfigurationDetails(tableAndFieldConfiguration: TableConfigAndFieldConfigurationsDetails): Observable<string> {
+        return this.coreHttpService.httpPostRequest(this.apiUrl + "TableConfiguration/UpdateTableAndFieldMappingConfiguration", tableAndFieldConfiguration);
+    }
 }
 
 @Injectable()
@@ -40,5 +46,18 @@ export class DataBaseConnectionNameResolver implements Resolve<TableListsService
     }
     resolve() {
         return this.tableConfigurationApiService.getDatabaseIdName();
+    }
+}
+
+@Injectable()
+export class TableConfigurationEditResolver implements Resolve<TableConfigAndFieldConfigurationsDetails> {
+    constructor(
+        private tableConfigurationApiService: TableConfigurationApiService,
+        private loaderService: LoaderService,
+    ) {
+    }
+    resolve(route: ActivatedRouteSnapshot) {
+        let id = route.paramMap.get('id');
+        return this.tableConfigurationApiService.getDetailsOfTableAndFieldConfigurationToedit(Number(id));
     }
 }

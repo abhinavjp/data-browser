@@ -54,11 +54,26 @@ namespace DataBrowser.Data.Repository
         }
         public void BulkInsert(IEnumerable<T> arry)
         {
-            databrowserEntities.BulkInsert<T>(arry);
+            if (arry.Any())
+                databrowserEntities.BulkInsert<T>(arry);
         }
         public void BulkDelete(IEnumerable<T> arry)
         {
-            databrowserEntities.BulkDelete<T>(arry);
+            if (arry.Any())
+                databrowserEntities.BulkDelete<T>(arry);
+        }
+        
+        public void BulkUpdate(IEnumerable<T> array)
+        {
+            if (array.Any())
+                databrowserEntities.BulkUpdate(array);
+        }
+        public void BulkInsertOrUpdate(IEnumerable<T> array)
+        {
+            //if (array.Any())
+            //{
+            //    databrowserEntities.
+            //}
         }
     }
 }

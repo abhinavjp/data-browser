@@ -48,8 +48,16 @@
                         </label>
                     </div>
 
+                    <div class="col-md-4" *ngIf="isEditScreen">
+                        <div class="form-group">
+                            <label for="password fornts">Master Table</label>
+                            <input disabled type="text" class="form-control form-control-sm" id="key" placeholder="Enter Data Key" 
+                            formControlName="masterTableName" required>
+                        </div>
+                    </div>
 
-                    <div class="col-md-4">
+
+                    <div class="col-md-4" *ngIf="!isEditScreen">
                         <div class="form-group">
                             <label for="password fornts">Master Table</label>
                             <select class="form-control form-control-sm" formControlName="masterTableName" (change)="getDetailsOfSelectedTabels(tableConfigCreateForm.controls['masterTableName'].value)"
@@ -59,7 +67,6 @@
                             </select>
                         </div>
                     </div>
-
 
                 </div>
             </fieldset>
@@ -119,43 +126,51 @@
                                                         </div>
 
                                                         <div class="col-md-1">
-                                                            <button class="btn btn-sm custom-button" (click)="getRefTableDetailsIndexWise(i)" style="margin-top: 7px;" *ngIf="!tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isSaved.value">
+                                                            <button class="btn btn-sm custom-button" (click)="getRefTableDetailsIndexWise(i)" style="margin-top: 7px;">
                                                                 <i class="fa fa-plus-square" tooltip="Add Relationship."></i>
                                                             </button>
                                                         </div>
 
                                                         <div class="col-md-2">
-                                                            <select class="form-control form-control-sm" style="margin-top: 7px;" formControlName="relationShipTableName" *ngIf="!tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isSaved.value && refTableListsArray[i].length > 0"
+                                                            <select class="form-control form-control-sm" style="margin-top: 7px;" formControlName="relationShipTableName" *ngIf="refTableListsArray[i].length > 0"
                                                                 (change)="getPrimaryKeycolumnsName(tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.relationShipTableName.value,i)">
                                                                 <option selected value="">Select Reference Table Name</option>
                                                                 <option *ngFor="let table of refTableListsArray[i]" [value]="table">{{table}}</option>
                                                             </select>
 
-                                                            <input disabled class="form-control form-control-sm" style="margin-top: 7px;" *ngIf="tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isSaved.value"
-                                                                formControlName="relationShipTableName">
+                                                            <!-- <input disabled class="form-control form-control-sm" style="margin-top: 7px;" *ngIf="tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isSaved.value"
+                                                                formControlName="relationShipTableName"> -->
 
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <select class="form-control form-control-sm" style="margin-top: 7px;" *ngIf="!tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isSaved.value && refTableColumnsList[i].length > 0"
-                                                                (change)="selectMappedColumnsAfterRefselect(tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.primaryTableColumnName.value,i)"
+                                                        <div class="col-md-2">
+                                                            <select class="form-control form-control-sm" style="margin-top: 7px;" *ngIf="refTableColumnsList[i].length > 0" (change)="selectMappedColumnsAfterRefselect(tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.primaryTableColumnName.value,i)"
                                                                 formControlName="primaryTableColumnName">
                                                                 <option selected value="">Select Primary Column Name</option>
                                                                 <option *ngFor="let table of refTableColumnsList[i]" [value]="table">{{table}}</option>
                                                             </select>
 
-                                                            <input disabled class="form-control form-control-sm" style="margin-top: 7px;" *ngIf="tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isSaved.value"
-                                                                formControlName="primaryTableColumnName">
+                                                            <!-- <input disabled class="form-control form-control-sm" style="margin-top: 7px;" *ngIf="tableConfigCreateForm.controls['tableDetailsArray'].controls[i].controls.isSaved.value"
+                                                                formControlName="primaryTableColumnName"> -->
 
                                                         </div>
 
-                                                        <div class="col-md-3" *ngIf="mappedColumnNames[i].length > 0">
-                                                            <angular2-multiselect [data]="mappedColumnNames[i]" [settings]="dropdownSettings" [(ngModel)]="selectedItems[i]" formControlName="mappedColumns">
-                                                            </angular2-multiselect>
+                                                        <div class="col-md-3">
+                                                            <span *ngIf="mappedColumnNames[i].length > 0">
+                                                                <angular2-multiselect [data]="mappedColumnNames[i]" [settings]="dropdownSettings" [(ngModel)]="selectedItems[i]" formControlName="mappedColumns">
+                                                                </angular2-multiselect>
+                                                            </span>
+                                                        </div>
+                                                        
+                                                        <div class="col-md-1 text-right">
+                                                            <button class="btn btn-sm custom-close-button" (click)="deleteConfiguration(i)" style="margin-top: 7px;">
+                                                                <i class="fa fa-times-circle" tooltip="Add Relationship."></i>
+                                                            </button>
                                                         </div>
                                                     </div>
 
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>

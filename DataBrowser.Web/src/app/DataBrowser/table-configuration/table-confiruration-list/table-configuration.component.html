@@ -17,7 +17,7 @@
         <p-dataTable [value]="tableconfigurationLists">
             <p-column [sortable]="false" [filter]="false" field="actions" header="Actions" [style]="{'width':'100px','text-align':'center'}">
                 <ng-template let-data="rowData" pTemplate="body">
-                    <span class="cursor-pointer" (click)="deleteDatabaseConnection(data.id,data.name)">
+                    <span class="cursor-pointer" (click)="editTableConfiguration(data.id)">
                         <i class="fa fa-edit text-primary" tooltip="edit"></i>
                     </span>
                     &nbsp;
@@ -32,8 +32,8 @@
             <p-column [sortable]="true" [filter]="true" field="masterTableName" header="Master Table"></p-column>
             <p-column [sortable]="false" [filter]="false" field="isTable" header="Table" [style]="{'width':'80px','text-align':'center'}">
                 <ng-template let-data="rowData" pTemplate="body">
-                    <i class="fa fa-check-square text-success" *ngIf="data.isTable"></i>
-                    <i class="fa fa-times-square text-danger" *ngIf="!data.isTable"></i>
+                    <i class="fa fa-check-square text-success" *ngIf="!data.isView"></i>
+                    
                 </ng-template>
             </p-column>
             <p-column [sortable]="false" [filter]="false" field="isView" header="view" [style]="{'width':'80px','text-align':'center'}">

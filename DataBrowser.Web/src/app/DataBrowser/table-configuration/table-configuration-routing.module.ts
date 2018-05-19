@@ -4,7 +4,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TableConfigurationComponent } from './table-confiruration-list/table-configuration.component';
 import { TableConfigurationCreateComponent } from './table-configuration-manage/configuration-create.component';
-import { DataBaseConnectionNameResolver } from './table-configuration-api.service';
+import { DataBaseConnectionNameResolver, TableConfigurationEditResolver } from './table-configuration-api.service';
+import { TableConfigurationEditComponent } from './table-configuration-manage/configuration-edit.component';
 
 
 const tableConfigRoute: Routes = [
@@ -22,7 +23,16 @@ const tableConfigRoute: Routes = [
         // resolve: {
         //     databaseConnectionIdName: DataBaseConnectionNameResolver
         // }
-    }];
+    },
+    {
+        path: 'table-configuration-edit/:id',
+        component: TableConfigurationEditComponent,
+        resolve: {
+            tableAndFieldDetailsToedit: TableConfigurationEditResolver
+        }
+    }
+
+];
 
 @NgModule({
     imports: [

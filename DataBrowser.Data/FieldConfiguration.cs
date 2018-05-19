@@ -52,6 +52,10 @@ namespace DataBrowser.Data
         [Display(Name = "Table config ID")]
         public int? TableConfigId { get; set; } // TableConfigId
 
+        [Column(@"IsDisplay", Order = 6, TypeName = "bit")]
+        [Display(Name = "Is display")]
+        public bool? IsDisplay { get; set; } // IsDisplay
+
         // Reverse navigation
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using DataBrowser.Service.Models;
+using HelperFoundation.ErrorHandler;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace DataBrowser.Service.Interface
 {
     public interface IDataBaseConnectionService
     {
-        List<DataBaseConnectionServiceModel> GetAll();
+        ProcessResult<List<DataBaseConnectionServiceModel>> GetAll();
         List<string> GetDataDataBaseLists(DataBaseNameFilterServiceModel databaseFilterServiceModel);
         string CreateDataBaseConnection(DataBaseConnectionServiceModel dataBaseConnection);
         string DeleteDatabaseConnection(int id);

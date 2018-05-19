@@ -10,8 +10,9 @@ import { TableConfigurationCreateComponent } from './table-configuration-manage/
 import { TableConfigurationComponent } from './table-confiruration-list/table-configuration.component';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown/multiselect.component';
-import { DataBaseConnectionNameResolver, TableConfigurationApiService } from './table-configuration-api.service';
+import { DataBaseConnectionNameResolver, TableConfigurationApiService, TableConfigurationEditResolver } from './table-configuration-api.service';
 import { TableConfigurationService } from './table-configuration.service';
+import { TableConfigurationEditComponent } from './table-configuration-manage/configuration-edit.component';
 
 
 @NgModule({
@@ -27,17 +28,20 @@ import { TableConfigurationService } from './table-configuration.service';
     ],
     declarations: [
         TableConfigurationCreateComponent,
-        TableConfigurationComponent
+        TableConfigurationComponent,
+        TableConfigurationEditComponent
     ],
     exports: [
         TableConfigurationCreateComponent,
-        TableConfigurationComponent
+        TableConfigurationComponent,
+        TableConfigurationEditComponent
     ],
     entryComponents: [],
     providers: [
         TableConfigurationApiService,
         DataBaseConnectionNameResolver,
-        TableConfigurationService
+        TableConfigurationService,
+        TableConfigurationEditResolver
     ],
 })
 export class TableConfigurationModule {

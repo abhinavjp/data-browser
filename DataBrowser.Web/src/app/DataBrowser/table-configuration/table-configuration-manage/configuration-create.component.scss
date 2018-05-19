@@ -107,9 +107,16 @@ label .fornts{
     color: white;
     border-radius:16px; 
     padding: 3px;
-    
-  }
-
+    }
+    .custom-close-button{
+      height: 24px;
+      width: 24px;
+      background: red;
+      color: white;
+      border-radius:16px; 
+      padding: 0px;
+      }
+  
 
  .my-class{
      height: 35px;

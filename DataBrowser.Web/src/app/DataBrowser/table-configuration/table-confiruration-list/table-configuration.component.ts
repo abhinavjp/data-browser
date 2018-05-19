@@ -50,4 +50,8 @@ export class TableConfigurationComponent implements OnInit {
             this.router.navigate(['/table-configuration-create', id]);
         }
     }
+
+    editTableConfiguration(id: number) {
+        this.router.navigate(['/table-configuration-edit', id]);
+    }
 }

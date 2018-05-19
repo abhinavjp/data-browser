@@ -25,10 +25,12 @@ export class TableDetailServiceModel {
     constraintsType: string;
     relationShipTableName: string;
     primaryTableColumnName: string;
+    referenceTableColumns?:Array<string>;
 }
 
 // Save Details 
 export class TableConfigurationDetails {
+    id?:number;
     name?: string;
     dataKey?: string;
     isTable?: boolean;
@@ -38,11 +40,16 @@ export class TableConfigurationDetails {
 }
 
 export class FieldConfigurtionDetails {
+    id?: number;
+    tableConfigId?: number;
     sourceColumnName?: string;
     sourceTableName?: string;
     referenceColumnName?: string;
     referenceTableName?: string;
+    constraintsType?: string;
     mappedCoumns?: Array<string> = [];
+    referenceTableColumns?:Array<string>;
+    isDisplay?:boolean;
 }
 
 export class TableConfigAndFieldConfigurationsDetails {

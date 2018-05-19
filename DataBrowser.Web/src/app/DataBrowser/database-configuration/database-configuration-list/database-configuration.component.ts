@@ -30,7 +30,7 @@ export class DataBaseConfigurationComponent implements OnInit {
 
     ngOnInit(): void {
         this.route.data.map(data => data.databaseConnection).subscribe((res) => {
-            this.rowData = res;
+            this.rowData = res.result;
         });
     }
     createDataBaseConnection() {

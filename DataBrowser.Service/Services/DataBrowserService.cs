@@ -26,7 +26,6 @@ namespace DataBrowser.Service.Services
                     { ConnectionId = a.ConnectionId ?? 0, Id = a.Id, MasterTableName = a.MasterTableName, Name = a.Name }).ToList();
                 }
                 return details;
-
             }
             catch (Exception ex)
             {
@@ -54,117 +53,86 @@ namespace DataBrowser.Service.Services
                 List<FieldConfiguration> fieldConfigurationDetails = new List<FieldConfiguration>();
                 using (var repo = new RepositoryPattern<FieldConfiguration>())
                 {
-                    fieldConfigurationDetails = repo.SelectAll().Where(a => a.TableConfigId == fieldDetailsFilterModel.Id).ToList();
+                    fieldConfigurationDetails = repo.SelectAll().Where(a => a.TableConfigId == fieldDetailsFilterModel.Id && a.IsDisplay.HasValue && a.IsDisplay.Value).ToList();
                 }
-                var fieldMappingDetails = fieldConfigurationDetails.
-                                   Where(c => c.FieldMappingConfigurations.Any()).
-                                   SelectMany(a => a.FieldMappingConfigurations.
-                                   Where(f => f.FieldConfigurationId == a.Id).ToList());
-                List<int> configurationIds = fieldMappingDetails.Select(a => a.FieldConfigurationId ?? 0).ToList();
-                var fieldDetailsWithGroupBy = new List<Temporurly>();
-                if (configurationIds.Any())
-                {
-                    fieldDetailsWithGroupBy = fieldConfigurationDetails.
-                        Where(a => configurationIds.Contains(a.Id))
-                        .GroupBy(g => g.ReferenceTableName)
-                        .Select(c => new Temporurly { TableName = c.Key, Values = c.ToList() }).ToList();
-                }
-                string selectQuery = GetSelectQueryDetails(fieldDetailsFilterModel.MasterTableName, fieldConfigurationDetails, fieldMappingDetails.ToList());
-                string leftJoinQuery = GetLeftJoinQueryDetails(fieldDetailsWithGroupBy,fieldDetailsFilterModel.MasterTableName);
+                string refTableSelectQuery = string.Empty;
+                string masterTableAlias = $"{fieldDetailsFilterModel.MasterTableName}_{DateTime.UtcNow.ToFileTimeUtc()}";
+
+                ///////
+                var leftJoinDetails = GetLeftJoinTablesDetailsToDisplay(fieldConfigurationDetails, fieldDetailsFilterModel, masterTableAlias, out refTableSelectQuery);
+                //////
+
+                string selectQuery = GetSelectQueryDetails(fieldDetailsFilterModel.MasterTableName, fieldConfigurationDetails, refTableSelectQuery, masterTableAlias);
                 string totalCount = "SELECT COUNT(*) AS [TotalCount] FROM " + fieldDetailsFilterModel.MasterTableName;
 
-                string query = selectQuery + " " + leftJoinQuery + " ORDER BY [" + fieldDetailsFilterModel.MasterTableName + "].Id OFFSET " + paginations + " ROWS FETCH NEXT " + fieldDetailsFilterModel.PageSize + " ROWS ONLY  " + totalCount;
+                string query = selectQuery + " " + leftJoinDetails + " ORDER BY " + masterTableAlias + ".Id OFFSET " + paginations + " ROWS FETCH NEXT " + fieldDetailsFilterModel.PageSize + " ROWS ONLY  " + totalCount;
 
                 string connectionString = "server= " + connectionDetails.ServerInstanceName + ";Initial Catalog=" + connectionDetails.DatabaseName + " ;uid=" + connectionDetails.UserName + ";pwd=" + connectionDetails.Password + ";";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         DataSet ds = new DataSet();
                         SqlDataAdapter da = new SqlDataAdapter();
                         da = new SqlDataAdapter(cmd);
                         da.Fill(ds);
+                        conn.Close();
                         return ds;
                     }
                 }
-
             }
             catch (Exception ex)
             {
                 throw;
             }
+        }
 
-        }
-        private string GetLeftJoinQueryDetails(List<Temporurly> fieldsWIthGroupBy,string masterTableName)
+        private string GetLeftJoinTablesDetailsToDisplay(List<FieldConfiguration> fieldConfigurationDetails, DatabrowserDropdownFilterServiceModel fieldDetailsFilterModel, string masterTableAlias, out string refTableSelectQuery)
         {
-            string leftJoinQuery = string.Empty;
-            if (fieldsWIthGroupBy.Any())
+            var newFieldConfigurationDetails = fieldConfigurationDetails.Where(c => c.FieldMappingConfigurations.Any()).ToList();
+            var leftJoinDetails = string.Empty;
+            var refTableSelectQueriesWithAlias = new List<string>();
+            newFieldConfigurationDetails.ForEach(v =>
             {
-                fieldsWIthGroupBy.ForEach(a =>
-                               {
-                                   var qu = string.Empty;
-                                   if (a.Values.Count == 1)
-                                   {
-                                       //Make query without 'AND'
-                                       a.Values.ForEach(q =>
-                                      {
-                                          qu = @"[" + masterTableName + @"]." + q.SourceColumnName + @" = [" + q.ReferenceTableName + @"]." + q.ReferenceColumnName;
-                                      });
-                                   }
-                                   else
-                                   {
-                                       var lastItem = a.Values.Last();
-                                       a.Values.ForEach(q =>
-                                       {
-                                           var d = string.Empty;
-                                           if (q.Equals(lastItem))
-                                           {
-                                               d = @"[" + masterTableName + @"]." + q.SourceColumnName + @" = [" + q.ReferenceTableName + @"]." + q.ReferenceColumnName;
-                                           }
-                                           else
-                                           {
-                                               d = @"[" + masterTableName + @"]." + q.SourceColumnName + @" = [" + q.ReferenceTableName + @"]." + q.ReferenceColumnName + " AND ";
-                                           }
-                                           qu += d;
-                                       });
-                                   }
-                                   var datas = @" LEFT JOIN [" + a.TableName + @"] ON " + qu;
-                                   leftJoinQuery += datas;
-                               });
-            }
-            return leftJoinQuery;
+                var queries = string.Empty;
+                var onQuery = string.Empty;
+                List<string> displayColumns = new List<string>();
+                var tableAlias = $"{v.ReferenceTableName}_{DateTime.UtcNow.ToFileTimeUtc()}";
+                if (!string.IsNullOrEmpty(v.ReferenceTableName) && !string.IsNullOrWhiteSpace(v.ReferenceTableName))
+                {
+                    onQuery = tableAlias + @"." + v.ReferenceColumnName + @" = " + masterTableAlias + @"." + v.SourceColumnName;
+                }
+                queries = @" LEFT JOIN [" + v.ReferenceTableName + "] " + tableAlias + @" ON " + onQuery;
+                leftJoinDetails += queries;
+                if (v.FieldMappingConfigurations.Any())
+                {
+                    displayColumns = v.FieldMappingConfigurations.Select(mapping => tableAlias + @"." + mapping.MapColumnName).ToList();
+                }
+                refTableSelectQueriesWithAlias.AddRange(displayColumns);
+            });
+            refTableSelectQuery = String.Join(",", refTableSelectQueriesWithAlias);
+            return leftJoinDetails;
         }
-        private string GetSelectQueryDetails(string masterTable, List<FieldConfiguration> fieldConfigurationDetails, List<FieldMappingConfiguration> fieldMappingConfig)
+
+        private string GetSelectQueryDetails(string masterTable, List<FieldConfiguration> fieldConfigurationDetails, string refTableSelectQuery, string masterTableAlias)
         {
             string finalQuery = string.Empty;
-            string masterTableDisplayColumns = GetSourcecolumnDetails(masterTable, fieldConfigurationDetails);
-            string refTableDisplayColumns = GetReferenceColumnDetails(masterTable, fieldMappingConfig);
-            finalQuery = @"SELECT" + masterTableDisplayColumns + "," + refTableDisplayColumns + " FROM " + masterTable;
+            string masterTableDisplayColumns = GetSourcecolumnDetails(masterTable, fieldConfigurationDetails, masterTableAlias);
+
+            finalQuery = (string.IsNullOrEmpty(refTableSelectQuery) || string.IsNullOrWhiteSpace(refTableSelectQuery))
+                ? @"SELECT " + masterTableDisplayColumns + " FROM " + masterTable + @" " + masterTableAlias
+                : @"SELECT " + masterTableDisplayColumns + "," + refTableSelectQuery + " FROM " + masterTable + @" " + masterTableAlias;
             return finalQuery;
         }
+        private string GetSourcecolumnDetails(string masterTable, List<FieldConfiguration> fieldsConfigDetails, string masterTableAlias)
+        {
+            List<string> displayColumns = new List<string>();
+            displayColumns = fieldsConfigDetails.Select(a => "" + masterTableAlias + "." + a.SourceColumnName).ToList();
+            var fieldWithCommaSaperators = String.Join(",", displayColumns);
+            return fieldWithCommaSaperators;
+        }
+    }
 
-        private string GetSourcecolumnDetails(string masterTable, List<FieldConfiguration> fieldsConfigDetails)
-        {
-            List<string> displayColumns = new List<string>();
-            displayColumns = fieldsConfigDetails.Select(a => "[" + masterTable + "]." + a.SourceColumnName).ToList();
-            var fieldWithCommaSaperators = String.Join(",", displayColumns);
-            return fieldWithCommaSaperators;
-        }
-        private string GetReferenceColumnDetails(string masterTable, List<FieldMappingConfiguration> fieldMappingConfig)
-        {
-            List<string> displayColumns = new List<string>();
-            displayColumns = fieldMappingConfig.Select(a => "[" + a.MapTableName + "]." + a.MapColumnName).Distinct().ToList();
-            var fieldWithCommaSaperators = String.Join(",", displayColumns);
-            return fieldWithCommaSaperators;
-        }
-    }
-    public class Temporurly
-    {
-        public string TableName { get; set; }
-        public List<FieldConfiguration> Values { get; set; }
-    }
-    
 }

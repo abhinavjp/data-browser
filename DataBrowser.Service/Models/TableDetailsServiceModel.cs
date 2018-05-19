@@ -12,6 +12,7 @@ namespace DataBrowser.Service.Models
         public string ConstraintsType { get; set; }
         public string RelationShipTableName { get; set; }
         public string PrimaryTableColumnName { get; set; }
+        public List<string> ReferenceTableColumns { get; set; }
 
     }
 }

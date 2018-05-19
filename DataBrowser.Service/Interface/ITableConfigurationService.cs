@@ -14,5 +14,7 @@ namespace DataBrowser.Service.Interface
         List<TableDetailsServiceModel> GetTablesDetails(IdNameServiceModel tableFilters);
         List<string> GetPrimaryKeyTableColumns(IdNameServiceModel columnFilter);
         string SaveTableConfiguraionDetails(TableAndFieldConfigurationServiceModel tableAndFieldConfiguration);
+        TableAndFieldConfigurationServiceModel GetDetailstableAndFieldsById(int id);
+        string UpdateTableAndfieldconfiguration(TableAndFieldConfigurationServiceModel tableAndFieldConfiguration);
     }
 }

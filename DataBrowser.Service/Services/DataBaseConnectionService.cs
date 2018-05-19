@@ -3,10 +3,12 @@ using DataBrowser.Data;
 using DataBrowser.Data.Repository;
 using DataBrowser.Service.Interface;
 using DataBrowser.Service.Models;
+using HelperFoundation.ErrorHandler;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using static HelperFoundation.ErrorHandler.ProcessResultHelper;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,17 +17,17 @@ namespace DataBrowser.Service.Services
 {
     public class DataBaseConnectionService : IDataBaseConnectionService
     {
-        public List<DataBaseConnectionServiceModel> GetAll()
+        public ProcessResult<List<DataBaseConnectionServiceModel>> GetAll()
         {
             try
             {
+                List<DataBaseConnectionServiceModel> dataBaseConnection = null;
                 using (var repo = new RepositoryPattern<DatabaseConnection>())
                 {
-                    List<DataBaseConnectionServiceModel> dataBaseConnection = new List<DataBaseConnectionServiceModel>();
                     var result = repo.SelectAll().ToList();
                     dataBaseConnection = Mapper.Map<List<DataBaseConnectionServiceModel>>(result);
-                    return dataBaseConnection;
                 }
+                return dataBaseConnection.GetResult();
             }
             catch (Exception ex)
             {
@@ -36,6 +38,11 @@ namespace DataBrowser.Service.Services
         {
             try
             {
+                if (databaseFilterServiceModel == null)
+                {
+                    
+                }
+
                 string connectionString = string.Empty;
                 List<string> dataBaseName = new List<string>();
                 if (!string.IsNullOrEmpty(databaseFilterServiceModel.UserName) || !string.IsNullOrEmpty(databaseFilterServiceModel.Password))

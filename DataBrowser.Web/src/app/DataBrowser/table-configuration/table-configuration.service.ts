@@ -1,4 +1,4 @@
-import { IdNameServiceModel, DataBaseNameFilterServiceModel, TableDetailServiceModel, TableConfigurationDetails } from "./table-configuration.class";
+import { IdNameServiceModel, DataBaseNameFilterServiceModel, TableDetailServiceModel, TableConfigurationDetails, FieldConfigurtionDetails } from "./table-configuration.class";
 import { CoreService } from "../../core/core.service";
 import * as _ from 'lodash';
 import { TableConfigurationApiService } from "./table-configuration-api.service";
@@ -17,6 +17,7 @@ export class TableConfigurationService {
     /////  ============================================================== Create Table Configurations ===================================================================
     initializeTableConfigurationForm = () => {
         return this.fBuilder.group({
+            id:[''],
             name: ['', Validators.required,],
             dataKey: ['', Validators.required],
             masterTableName: ['', Validators.required],
@@ -28,12 +29,12 @@ export class TableConfigurationService {
     }
     initializeFormArray = () => {
         return this.fBuilder.group({
+            id: [''],
             columnName: [''],
             alias: [''],
             constraintsType: [''],
             relationShipTableName: [''],
             primaryTableColumnName: [''],
-            isSaved: [''],
             mappedColumns: [[]],
             isChecked: [],
         });
@@ -83,22 +84,6 @@ export class TableConfigurationService {
         }
     }
 
-    patchValueOfFormData = (formToPatch: FormGroup, tableDetailsList: Array<TableDetailServiceModel>) => {
-        (<FormArray>formToPatch.controls['tableDetailsArray']) = this.fBuilder.array([]);
-        tableDetailsList.forEach(table => {
-            const fb = this.initializeFormArray();
-            fb.controls['columnName'].patchValue(table.columnName);
-            fb.controls['relationShipTableName'].patchValue(table.relationShipTableName);
-            fb.controls['constraintsType'].patchValue(table.constraintsType);
-            fb.controls['primaryTableColumnName'].patchValue(table.primaryTableColumnName);
-            fb.controls['isChecked'].setValue(false);
-            if (table.primaryTableColumnName !== '' && table.primaryTableColumnName !== null && table.primaryTableColumnName !== undefined)
-                fb.controls['isSaved'].setValue(true);
-            else
-                fb.controls['isSaved'].setValue(false);
-            (<FormArray>formToPatch.controls['tableDetailsArray']).push(fb);
-        });
-    }
 
     additionalValidationOfFormSaveTime = (tableConfigCreateForm: FormGroup) => {
         let counter = 0;
@@ -121,6 +106,7 @@ export class TableConfigurationService {
 
     getTableConfigurationDetailsFromForm = (tableConfigCreateForm: FormGroup, connectionId: number): TableConfigurationDetails => {
         let tableConfigDetails: TableConfigurationDetails = {
+            id:tableConfigCreateForm.controls['id'].value,
             name: tableConfigCreateForm.controls['name'].value,
             dataKey: tableConfigCreateForm.controls['dataKey'].value,
             masterTableName: tableConfigCreateForm.controls['masterTableName'].value,

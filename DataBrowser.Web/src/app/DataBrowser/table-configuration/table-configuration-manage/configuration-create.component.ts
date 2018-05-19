@@ -29,6 +29,7 @@ export class TableConfigurationCreateComponent implements OnInit {
     connectionId: number;
     tableDetailsList: Array<TableDetailServiceModel> = [];
 
+
     primaryKeyColumnLists: Array<string> = [];
     dropdownSettings: Object;
 
@@ -57,9 +58,7 @@ export class TableConfigurationCreateComponent implements OnInit {
         this.route.params.subscribe(params => {
             let dataToFilter = new DataBaseNameFilterServiceModel();
             this.connectionId = Number(params.id);
-            dataToFilter.connectionId = this.connectionId;
-            dataToFilter.isTable = true;
-            dataToFilter.isView = false;
+            dataToFilter = { connectionId: this.connectionId, isTable: true, isView: false };
             this.getTableLists(dataToFilter);
         });
         this.tableConfigCreateForm = this.tableConfigurationService.initializeTableConfigurationForm();
@@ -106,9 +105,7 @@ export class TableConfigurationCreateComponent implements OnInit {
                     this.tableDetailsList = data;
                     if (this.tableDetailsList.length > 0) {
                         this.initializeArrays();
-                        this.tableConfigurationService.patchValueOfFormData(this.tableConfigCreateForm, this.tableDetailsList);
-                        //assign data which have allready relationship created for mappdColumnDropdown
-                        this.assignDataForMappedColumns();
+                        this.patchValueOfFormData(this.tableConfigCreateForm, this.tableDetailsList);
                     } else {
                         this.coreService.alertDialog('No columns found....');
                     }
@@ -124,6 +121,9 @@ export class TableConfigurationCreateComponent implements OnInit {
             this.refTableColumnsList[i] = [];
             this.primaryKeyColumnLists = [];
         } else {
+            (<FormGroup>(<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls[i]).controls['primaryTableColumnName'].patchValue('');
+            (<FormGroup>(<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls[i]).controls['mappedColumns'].patchValue([]);
+            
             let columnFilter = new IdNameServiceModel();
             columnFilter = { id: this.connectionId, name: relationShipTableName };
             this.tableConfigurationApiService.getPrimaryKeyTableColumnName(columnFilter)
@@ -211,22 +211,49 @@ export class TableConfigurationCreateComponent implements OnInit {
             this.selectedItems[i] = [];
         }
     }
-    ///ASssign those data which have allready relationship created for Mapped columns
-    private assignDataForMappedColumns = () => {
-        for (let i = 0; i < this.tableDetailsList.length; i++) {
-            if (this.tableDetailsList[i].relationShipTableName !== '') {
-                let columnFilter = new IdNameServiceModel();
-                columnFilter = { id: this.connectionId, name: this.tableDetailsList[i].relationShipTableName };
-                this.tableConfigurationApiService.getPrimaryKeyTableColumnName(columnFilter)
-                    .subscribe(data => {
-                        this.primaryKeyColumnLists = data;
-                        this.refTableColumnsList[i] = this.primaryKeyColumnLists;
-                        if (this.tableDetailsList[i].primaryTableColumnName !== '' && !this.coreService.isNullOrUndefined(this.tableDetailsList[i].primaryTableColumnName)) {
-                            this.selectMappedColumnsAfterRefselect(this.tableDetailsList[i].primaryTableColumnName, i);
-                        }
-                    });
+
+    private patchValueOfFormData = (formToPatch: FormGroup, tableDetailsList: Array<TableDetailServiceModel>) => {
+        (<FormArray>formToPatch.controls['tableDetailsArray']) = this.fBuilder.array([]);
+        let counter = 0;
+        tableDetailsList.forEach(table => {
+            const fb = this.tableConfigurationService.initializeFormArray();
+            fb.controls['columnName'].patchValue(table.columnName);
+            fb.controls['relationShipTableName'].patchValue(table.relationShipTableName);
+            fb.controls['constraintsType'].patchValue(table.constraintsType);
+            fb.controls['primaryTableColumnName'].patchValue(table.primaryTableColumnName);
+            fb.controls['isChecked'].setValue(false);
+            if (!this.coreService.isNullOrUndefined(table.referenceTableColumns) && table.referenceTableColumns.length > 0) {
+                this.refTableColumnsList[counter] = table.referenceTableColumns;
+                let i = 0;
+                _.each(table.referenceTableColumns, column => {
+                    let dataToPush = { "itemName": column, "id": i++ };
+                    if (dataToPush.itemName === table.primaryTableColumnName) { this.selectedItems[counter].push(dataToPush); }
+                    this.mappedColumnNames[counter].push(dataToPush);
+                });
+
             }
-        }
+            if (!this.coreService.isNullOrUndefined(table.relationShipTableName) && table.relationShipTableName !== '') {
+                this.refTableListsArray[counter] = this.tableLists;
+
+            }
+            (<FormArray>formToPatch.controls['tableDetailsArray']).push(fb);
+            counter = counter + 1;
+        });
     }
+
+    
+    deleteConfiguration = (i: number) => {
+        this.refTableColumnsList[i] = [];
+        this.refTableListsArray[i] = [];
+        this.mappedColumnNames[i] = [];
+        this.selectedItems[i] = [];
+
+        (<FormGroup>(<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls[i]).controls['relationShipTableName'].patchValue('');
+        (<FormGroup>(<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls[i]).controls['primaryTableColumnName'].patchValue('');
+        (<FormGroup>(<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls[i]).controls['mappedColumns'].patchValue([]);
+
+    }
+
+
 }
 
