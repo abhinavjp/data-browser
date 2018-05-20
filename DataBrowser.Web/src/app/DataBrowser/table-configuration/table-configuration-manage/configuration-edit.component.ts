@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TableConfigAndFieldConfigurationsDetails, FieldConfigurtionDetails, IdNameServiceModel, DataBaseNameFilterServiceModel, TableDetailServiceModel } from "../table-configuration.class";
 import { FormGroup, FormArray, FormControl, FormBuilder } from "@angular/forms";
@@ -18,7 +18,8 @@ import { AlertDialogComponent } from "../../../shared/component/dialoges/alerts-
     styleUrls: ['configuration-create.component.scss']
 })
 
-export class TableConfigurationEditComponent implements OnInit {
+export class TableConfigurationEditComponent implements OnInit, OnDestroy {
+
 
     tableConfigCreateForm: FormGroup;
     tableAndFieldConfiguration = new TableConfigAndFieldConfigurationsDetails();
@@ -36,6 +37,7 @@ export class TableConfigurationEditComponent implements OnInit {
     isCheckedAll: boolean = false;
     isEditScreen: boolean = true;
 
+    private alive: boolean = true;
     constructor(
         private router: Router,
         private fBuilder: FormBuilder,
@@ -90,6 +92,7 @@ export class TableConfigurationEditComponent implements OnInit {
 
     getTableLists = (dataToFilter: DataBaseNameFilterServiceModel, isCallMethod?: boolean) => {
         this.tableConfigurationApiService.getTableNamesFromDatabase(dataToFilter)
+            .takeWhile(() => this.alive)
             .subscribe(data => {
                 if (this.coreService.isNullOrUndefined(data) || data.length === 0) {
                     let message = (dataToFilter.isTable) ? 'There are no table' : 'There are no view';
@@ -117,6 +120,7 @@ export class TableConfigurationEditComponent implements OnInit {
             let columnFilter = new IdNameServiceModel();
             columnFilter = { id: this.tableAndFieldConfiguration.tableConfiguration.connectionId, name: relationShipTableName };
             this.tableConfigurationApiService.getPrimaryKeyTableColumnName(columnFilter)
+                .takeWhile(() => this.alive)
                 .subscribe(data => {
                     this.tableConfigCreateForm.controls['']
                     this.primaryKeyColumnLists = data;
@@ -231,6 +235,7 @@ export class TableConfigurationEditComponent implements OnInit {
 
                     console.log(tableAndFieldConfigurationss);
                     this.tableConfigurationApiService.UpdateTableConfigurationDetails(tableAndFieldConfigurationss)
+                        .takeWhile(() => this.alive)
                         .subscribe(data => {
                             this.coreToasterService.showSuccess(data);
                             this.router.navigate(['/table-configuration']);
@@ -251,6 +256,10 @@ export class TableConfigurationEditComponent implements OnInit {
         (<FormGroup>(<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls[i]).controls['primaryTableColumnName'].patchValue('');
         (<FormGroup>(<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls[i]).controls['mappedColumns'].patchValue([]);
 
+    }
+
+    ngOnDestroy(): void {
+        this.alive = false;
     }
 
     // getDetailsOfSelectedTabels = (tableName: string) => {

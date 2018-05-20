@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { ActivatedRoute } from '@angular/router';
@@ -9,7 +9,7 @@ import { DataBaseConnectionManagecomponent } from '../database-connection-manage
 import { ConfirmDialogComponent } from '../../../shared/component/dialoges/confirm-dialog/confirm.component';
 import { DatabaseConfigurationApiService } from '../database-configuration-api.service';
 import { ConfirmationService } from 'primeng/api';
-
+import "rxjs/add/operator/takeWhile";
 
 @Component({
     moduleId: module.id,
@@ -17,9 +17,12 @@ import { ConfirmationService } from 'primeng/api';
     templateUrl: 'database-configuration.component.html',
     styleUrls: ['database-configuration.component.scss']
 })
-export class DataBaseConfigurationComponent implements OnInit {
+export class DataBaseConfigurationComponent implements OnInit, OnDestroy {
+
     private columnDefs;
     private rowData;
+
+    private alive: boolean = true;
 
     constructor(
         private modalService: BsModalService,
@@ -31,9 +34,10 @@ export class DataBaseConfigurationComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.route.data.map(data => data.databaseConnection).subscribe((res) => {
-            this.rowData = res.result;
-        });
+        this.route.data.map(data => data.databaseConnection)
+            .subscribe((res) => {
+                this.rowData = res.result;
+            });
     }
     createDataBaseConnection() {
         let modelRef: BsModalRef = this.modalService.show(DataBaseConnectionManagecomponent, { class: 'modal-md' })
@@ -45,6 +49,7 @@ export class DataBaseConfigurationComponent implements OnInit {
     }
     getAllDatabaseConnections = () => {
         this.databaseConfigurationApiService.getDataBaseConnection()
+            .takeWhile(() => this.alive)
             .subscribe(data => {
                 this.rowData = data;
             });
@@ -66,7 +71,6 @@ export class DataBaseConfigurationComponent implements OnInit {
     //     });
     // }
 
-
     deleteDatabaseConnection = (id: number, name: string) => {
         this.confirmationService.confirm({
             message: 'Do you want to delete ' + name + ' ?',
@@ -74,6 +78,7 @@ export class DataBaseConfigurationComponent implements OnInit {
             icon: 'fa fa-trash',
             accept: () => {
                 this.databaseConfigurationApiService.deleteDatabaseConnection(id)
+                    .takeWhile(() => this.alive)
                     .subscribe(data => {
                         this.coreToasterService.showSuccess(data);
                         this.getAllDatabaseConnections();
@@ -85,5 +90,8 @@ export class DataBaseConfigurationComponent implements OnInit {
         });
     }
 
+    ngOnDestroy(): void {
+        this.alive = false;
+    }
 
 }

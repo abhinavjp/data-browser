@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { CoreService } from "../../core/core.service";
 import { DropdownModel } from "../table-configuration/table-configuration.class";
@@ -15,11 +15,11 @@ import { DatabrowserMainApiService } from "./data-browser-main-api.service";
     styleUrls: ['data-browser.component.scss']
 })
 
-export class DataBrowserMainComponent implements OnInit {
+export class DataBrowserMainComponent implements OnInit, OnDestroy {
 
 
     @ViewChild('p') paginator: Paginator;
-    
+
     dataBrowserFilterDropDown: Array<DropdownModel> = [{ label: 'Select Table Configuration', value: null }];
     dataBrowserFilterLists: Array<DatabrowserDropdownServiceModel> = [];
     selectedTableConfiguration: any;
@@ -29,6 +29,8 @@ export class DataBrowserMainComponent implements OnInit {
 
     pageSize: number = 25;
     totalRecords: number;
+
+    private alive: boolean = true;
     constructor(
         private route: ActivatedRoute,
         private coreService: CoreService,
@@ -50,13 +52,13 @@ export class DataBrowserMainComponent implements OnInit {
         });
     }
 
-    paginate = (event,$event) => {
+    paginate = (event, $event) => {
         let pageNumber = event.page + 1;
         this.pageSize = event.rows;
-        this.getDetailsOfFields(pageNumber,$event);
+        this.getDetailsOfFields(pageNumber, $event);
     }
 
-    getDetailsOfFields = (pageNumber: number,$event) => {
+    getDetailsOfFields = (pageNumber: number, $event) => {
         this.fieldValues = [];
         this.columns = [];
         this.totalRecords = 0;
@@ -70,6 +72,7 @@ export class DataBrowserMainComponent implements OnInit {
                 fieldDetailsFilterModel.pageNumber = pageNumber;
                 fieldDetailsFilterModel.pageSize = this.pageSize;
                 this.databrowserMainApiService.getFieldsDetails(fieldDetailsFilterModel)
+                    .takeWhile(() => this.alive)
                     .subscribe(data => {
                         this.fieldValues = data.table;
                         this.totalRecords = data.table1[0].totalCount;
@@ -85,37 +88,18 @@ export class DataBrowserMainComponent implements OnInit {
                             });
                         }
                     });
-                        if(pageNumber == 1){
-                            this.reset($event);
-                        }
-                    
+                if (pageNumber == 1) {
+                    this.reset($event);
+                }
+
             }
         }
     }
 
-
     reset($event) {
         this.paginator.changePageToFirst($event);
     }
+    ngOnDestroy(): void {
+        this.alive = false;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//OFFSET @PageSize * (@PageNumber - 1) ROWS
-//FETCH NEXT @PageSize ROWS ONLY 
-

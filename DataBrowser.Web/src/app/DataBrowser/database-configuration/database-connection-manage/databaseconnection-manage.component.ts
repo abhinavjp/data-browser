@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { CoreService } from '../../../core/core.service';
@@ -16,10 +16,12 @@ import { DatabaseConfigurationService } from '../database-configuration.service'
     templateUrl: 'databaseconnection-manage.component.html',
 
 })
-export class DataBaseConnectionManagecomponent implements OnInit {
+export class DataBaseConnectionManagecomponent implements OnInit, OnDestroy {
 
     dataBaseConnecationForm: FormGroup;
     private dataBaseNameLists: Array<string> = [];
+
+    private alive: boolean = true;
 
     constructor(
         private modelClose: BsModalRef,
@@ -36,7 +38,7 @@ export class DataBaseConnectionManagecomponent implements OnInit {
     ngOnInit(): void {
         this.dataBaseConnecationForm = this.databaseConfigurationService.initializeDatabaseConnectionFormControls();
     }
-    
+
     getDataBaseLists = () => {
         if (this.dataBaseConnecationForm.invalid) {
             this.coreFormValidation.formValidate(this.dataBaseConnecationForm, true);
@@ -44,6 +46,7 @@ export class DataBaseConnectionManagecomponent implements OnInit {
             let dataBaseNamelistFilterServiceModel = new DataBaseNameListFilterServiceModel();
             Object.assign(dataBaseNamelistFilterServiceModel, this.dataBaseConnecationForm.value);
             this.databaseConfigurationApiService.getDataBaseNameLists(dataBaseNamelistFilterServiceModel)
+                .takeWhile(() => this.alive)
                 .subscribe(list => {
                     if (!this.coreService.isNullOrUndefined(list))
                         this.dataBaseNameLists = list;
@@ -61,6 +64,7 @@ export class DataBaseConnectionManagecomponent implements OnInit {
                 let dataBaseConnection = new DataBaseConnectionServiceModel();
                 Object.assign(dataBaseConnection, this.dataBaseConnecationForm.value);
                 this.databaseConfigurationApiService.createDataBaseConnection(dataBaseConnection)
+                    .takeWhile(() => this.alive)
                     .subscribe(data => {
                         this.coreToasterService.showSuccess('Database Connection Create Successfully', 'Database Connection');
                         this.modelServices.setDismissReason('Yes');
@@ -72,5 +76,9 @@ export class DataBaseConnectionManagecomponent implements OnInit {
     closeModel() {
         this.modelServices.setDismissReason('No');
         this.modelClose.hide();
+    }
+
+    ngOnDestroy(): void {
+        this.alive = false;
     }
 }

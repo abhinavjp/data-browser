@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FormGroup, Validators, FormBuilder, FormArray, FormControl, Validator, AbstractControl } from "@angular/forms";
 import { LoaderService } from "../../../core/loader.service";
@@ -22,7 +22,8 @@ import { TableConfigurationService } from "../table-configuration.service";
     styleUrls: ['configuration-create.component.scss']
 })
 
-export class TableConfigurationCreateComponent implements OnInit {
+export class TableConfigurationCreateComponent implements OnInit, OnDestroy {
+
 
     tableConfigCreateForm: FormGroup;
     tableLists: Array<string> = [];
@@ -38,6 +39,8 @@ export class TableConfigurationCreateComponent implements OnInit {
     refTableListsArray: any = [];
     refTableColumnsList: any = [];
     isCheckedAll: boolean = false;
+
+    private alive: boolean = true;
 
     constructor(
         private route: ActivatedRoute,
@@ -83,6 +86,7 @@ export class TableConfigurationCreateComponent implements OnInit {
 
     getTableLists = (dataToFilter: DataBaseNameFilterServiceModel) => {
         this.tableConfigurationApiService.getTableNamesFromDatabase(dataToFilter)
+            .takeWhile(() => this.alive)
             .subscribe(data => {
                 if (this.coreService.isNullOrUndefined(data) || data.length === 0) {
                     let message = (dataToFilter.isTable) ? 'There are no table' : 'There are no view';
@@ -101,6 +105,7 @@ export class TableConfigurationCreateComponent implements OnInit {
             let tablefilter = new IdNameServiceModel();
             tablefilter = { id: this.connectionId, name: tableName };
             this.tableConfigurationApiService.getTableDetails(tablefilter)
+                .takeWhile(() => this.alive)
                 .subscribe(data => {
                     this.tableDetailsList = data;
                     if (this.tableDetailsList.length > 0) {
@@ -123,10 +128,11 @@ export class TableConfigurationCreateComponent implements OnInit {
         } else {
             (<FormGroup>(<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls[i]).controls['primaryTableColumnName'].patchValue('');
             (<FormGroup>(<FormArray>this.tableConfigCreateForm.controls['tableDetailsArray']).controls[i]).controls['mappedColumns'].patchValue([]);
-            
+
             let columnFilter = new IdNameServiceModel();
             columnFilter = { id: this.connectionId, name: relationShipTableName };
             this.tableConfigurationApiService.getPrimaryKeyTableColumnName(columnFilter)
+                .takeWhile(() => this.alive)
                 .subscribe(data => {
                     this.primaryKeyColumnLists = data;
                     this.refTableColumnsList[i] = this.primaryKeyColumnLists;
@@ -193,6 +199,7 @@ export class TableConfigurationCreateComponent implements OnInit {
                     tableAndFieldConfigurations.tableConfiguration = tableConfigurationDetails;
                     tableAndFieldConfigurations.fieldConfiguration = fieldConfigurationDetails;
                     this.tableConfigurationApiService.saveTableConfigurationDetails(tableAndFieldConfigurations)
+                        .takeWhile(() => this.alive)
                         .subscribe(data => {
                             this.coreToasetrService.showSuccess(data);
                             this.router.navigate(['/table-configuration']);
@@ -241,7 +248,7 @@ export class TableConfigurationCreateComponent implements OnInit {
         });
     }
 
-    
+
     deleteConfiguration = (i: number) => {
         this.refTableColumnsList[i] = [];
         this.refTableListsArray[i] = [];
@@ -254,6 +261,8 @@ export class TableConfigurationCreateComponent implements OnInit {
 
     }
 
-
+    ngOnDestroy(): void {
+        this.alive = false;
+    }
 }
 
