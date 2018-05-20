@@ -94,12 +94,14 @@ namespace DataBrowser.Service.Services
             var newFieldConfigurationDetails = fieldConfigurationDetails.Where(c => c.FieldMappingConfigurations.Any()).ToList();
             var leftJoinDetails = string.Empty;
             var refTableSelectQueriesWithAlias = new List<string>();
+            var counter = default(int);
             newFieldConfigurationDetails.ForEach(v =>
             {
+                counter += 1;
                 var queries = string.Empty;
                 var onQuery = string.Empty;
                 List<string> displayColumns = new List<string>();
-                var tableAlias = $"{v.ReferenceTableName}_{DateTime.UtcNow.ToFileTimeUtc()}";
+                var tableAlias = $"{v.ReferenceTableName}_{DateTime.UtcNow.ToFileTimeUtc()}" + counter.ToString();
                 if (!string.IsNullOrEmpty(v.ReferenceTableName) && !string.IsNullOrWhiteSpace(v.ReferenceTableName))
                 {
                     onQuery = tableAlias + @"." + v.ReferenceColumnName + @" = " + masterTableAlias + @"." + v.SourceColumnName;

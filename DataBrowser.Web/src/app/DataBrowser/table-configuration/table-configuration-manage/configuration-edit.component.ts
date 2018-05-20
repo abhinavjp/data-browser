@@ -34,8 +34,8 @@ export class TableConfigurationEditComponent implements OnInit {
     refTableListsArray: any = [];
     refTableColumnsList: any = [];
     isCheckedAll: boolean = false;
-
     isEditScreen: boolean = true;
+
     constructor(
         private router: Router,
         private fBuilder: FormBuilder,
@@ -192,37 +192,6 @@ export class TableConfigurationEditComponent implements OnInit {
         });
     }
 
-
-    private patchValueOfFormDataAfterTableChange = (formToPatch: FormGroup, tableDetailsList: any) => {
-        (<FormArray>formToPatch.controls['tableDetailsArray']) = this.fBuilder.array([]);
-        let counter = 0;
-        tableDetailsList.forEach(table => {
-            const fb = this.tableConfigurationService.initializeFormArray();
-            fb.controls['columnName'].patchValue(table.columnName);
-            fb.controls['relationShipTableName'].patchValue(table.relationShipTableName);
-            fb.controls['constraintsType'].patchValue(table.constraintsType);
-            fb.controls['primaryTableColumnName'].patchValue(table.primaryTableColumnName);
-            fb.controls['isChecked'].setValue(false);
-            if (!this.coreService.isNullOrUndefined(table.referenceTableColumns) && table.referenceTableColumns.length > 0) {
-                this.refTableColumnsList[counter] = table.referenceTableColumns;
-                let i = 0;
-                _.each(table.referenceTableColumns, column => {
-                    let dataToPush = { "itemName": column, "id": i++ };
-                    if (dataToPush.itemName === table.primaryTableColumnName) { this.selectedItems[counter].push(dataToPush); }
-                    this.mappedColumnNames[counter].push(dataToPush);
-                });
-
-            }
-            if (!this.coreService.isNullOrUndefined(table.relationShipTableName) && table.relationShipTableName !== '') {
-                this.refTableListsArray[counter] = this.tableLists;
-
-            }
-            (<FormArray>formToPatch.controls['tableDetailsArray']).push(fb);
-            counter = counter + 1;
-        });
-    }
-
-
     saveTableConfigurations = () => {
         if (this.tableConfigCreateForm.invalid) {
             this.coreFormValidation.formValidate(this.tableConfigCreateForm, false);
@@ -304,4 +273,32 @@ export class TableConfigurationEditComponent implements OnInit {
     //     }
     // }
 
+    // private patchValueOfFormDataAfterTableChange = (formToPatch: FormGroup, tableDetailsList: any) => {
+    //     (<FormArray>formToPatch.controls['tableDetailsArray']) = this.fBuilder.array([]);
+    //     let counter = 0;
+    //     tableDetailsList.forEach(table => {
+    //         const fb = this.tableConfigurationService.initializeFormArray();
+    //         fb.controls['columnName'].patchValue(table.columnName);
+    //         fb.controls['relationShipTableName'].patchValue(table.relationShipTableName);
+    //         fb.controls['constraintsType'].patchValue(table.constraintsType);
+    //         fb.controls['primaryTableColumnName'].patchValue(table.primaryTableColumnName);
+    //         fb.controls['isChecked'].setValue(false);
+    //         if (!this.coreService.isNullOrUndefined(table.referenceTableColumns) && table.referenceTableColumns.length > 0) {
+    //             this.refTableColumnsList[counter] = table.referenceTableColumns;
+    //             let i = 0;
+    //             _.each(table.referenceTableColumns, column => {
+    //                 let dataToPush = { "itemName": column, "id": i++ };
+    //                 if (dataToPush.itemName === table.primaryTableColumnName) { this.selectedItems[counter].push(dataToPush); }
+    //                 this.mappedColumnNames[counter].push(dataToPush);
+    //             });
+
+    //         }
+    //         if (!this.coreService.isNullOrUndefined(table.relationShipTableName) && table.relationShipTableName !== '') {
+    //             this.refTableListsArray[counter] = this.tableLists;
+
+    //         }
+    //         (<FormArray>formToPatch.controls['tableDetailsArray']).push(fb);
+    //         counter = counter + 1;
+    //     });
+    // }
 }
