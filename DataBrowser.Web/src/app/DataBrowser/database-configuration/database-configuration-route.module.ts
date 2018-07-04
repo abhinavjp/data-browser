@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { DataBaseConfigurationComponent } from './database-configuration-list/database-configuration.component';
 import { CommonModule } from '@angular/common';
 import { DataBaseConnectionResolver } from './database-configuration-api.service';
+import { AuthGuard } from '../../authentication/auth/auth-guard.service';
 
 const databaseConfigRoute: Routes = [
     {
@@ -10,13 +11,14 @@ const databaseConfigRoute: Routes = [
         component: DataBaseConfigurationComponent,
         resolve: {
             databaseConnection: DataBaseConnectionResolver
-        }
+        },
+        canActivate:[AuthGuard]
     }]
 
 @NgModule({
     imports: [
         RouterModule.forChild(databaseConfigRoute),
-        CommonModule
+        CommonModule  
     ],
     exports: [RouterModule]
 })

@@ -24,7 +24,9 @@ namespace DataBrowser.Data
         public System.Data.Entity.DbSet<DatabaseConnection> DatabaseConnections { get; set; } // DatabaseConnection
         public System.Data.Entity.DbSet<FieldConfiguration> FieldConfigurations { get; set; } // FieldConfiguration
         public System.Data.Entity.DbSet<FieldMappingConfiguration> FieldMappingConfigurations { get; set; } // FieldMappingConfiguration
+        public System.Data.Entity.DbSet<SchemaVersion> SchemaVersions { get; set; } // SchemaVersions
         public System.Data.Entity.DbSet<TableConfiguration> TableConfigurations { get; set; } // TableConfiguration
+        public System.Data.Entity.DbSet<User> Users { get; set; } // User
 
         static DataBrowserDbContext()
         {
@@ -83,7 +85,9 @@ namespace DataBrowser.Data
             //modelBuilder.Configurations.Add(new DatabaseConnectionConfiguration());
             //modelBuilder.Configurations.Add(new FieldConfigurationConfiguration());
             //modelBuilder.Configurations.Add(new FieldMappingConfigurationConfiguration());
+            //modelBuilder.Configurations.Add(new SchemaVersionConfiguration());
             //modelBuilder.Configurations.Add(new TableConfigurationConfiguration());
+            //modelBuilder.Configurations.Add(new UserConfiguration());
 
             OnModelCreatingPartial(modelBuilder);
         }
@@ -93,7 +97,9 @@ namespace DataBrowser.Data
             //modelBuilder.Configurations.Add(new DatabaseConnectionConfiguration(schema));
             //modelBuilder.Configurations.Add(new FieldConfigurationConfiguration(schema));
             //modelBuilder.Configurations.Add(new FieldMappingConfigurationConfiguration(schema));
+            //modelBuilder.Configurations.Add(new SchemaVersionConfiguration(schema));
             //modelBuilder.Configurations.Add(new TableConfigurationConfiguration(schema));
+            //modelBuilder.Configurations.Add(new UserConfiguration(schema));
             return modelBuilder;
         }
 

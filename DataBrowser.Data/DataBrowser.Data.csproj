@@ -134,7 +134,13 @@
     <Compile Include="Interface\IRepositoryInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\RepositoryPattern.cs" />
+    <Compile Include="SchemaVersion.cs">
+      <DependentUpon>DataBrowserTest.tt</DependentUpon>
+    </Compile>
     <Compile Include="TableConfiguration.cs">
+      <DependentUpon>DataBrowserTest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="User.cs">
       <DependentUpon>DataBrowserTest.tt</DependentUpon>
     </Compile>
   </ItemGroup>

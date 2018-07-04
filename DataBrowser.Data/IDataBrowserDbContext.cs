@@ -22,7 +22,9 @@ namespace DataBrowser.Data
         System.Data.Entity.DbSet<DatabaseConnection> DatabaseConnections { get; set; } // DatabaseConnection
         System.Data.Entity.DbSet<FieldConfiguration> FieldConfigurations { get; set; } // FieldConfiguration
         System.Data.Entity.DbSet<FieldMappingConfiguration> FieldMappingConfigurations { get; set; } // FieldMappingConfiguration
+        System.Data.Entity.DbSet<SchemaVersion> SchemaVersions { get; set; } // SchemaVersions
         System.Data.Entity.DbSet<TableConfiguration> TableConfigurations { get; set; } // TableConfiguration
+        System.Data.Entity.DbSet<User> Users { get; set; } // User
 
         int SaveChanges();
         System.Threading.Tasks.Task<int> SaveChangesAsync();

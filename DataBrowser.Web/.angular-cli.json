@@ -19,8 +19,9 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "../node_modules/bootstrap/dist/css/bootstrap.min.css",
         "styles.css",
+        "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+        "../node_modules/bootstrap/dist/css/bootstrap.css",
         "../node_modules/font-awesome/css/font-awesome.css",
         "../node_modules/primeng/resources/themes/omega/theme.css",
         "../node_modules/primeng/resources/primeng.css",
@@ -32,7 +33,6 @@
       "scripts": [
         "../node_modules/bootstrap/dist/js/bootstrap.js",
         "../node_modules/lodash/lodash.js",
-        
         "../node_modules/ng2-toastr/bundles/ng2-toastr.min.js",
         "../node_modules/ng4-loading-spinner/ng4-loading-spinner.umd.js"
       ],

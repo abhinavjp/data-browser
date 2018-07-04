@@ -21,6 +21,7 @@ namespace DataBrowser.Service.Configurator
                 x.For<IDataBaseConnectionService>().Use<DataBaseConnectionService>();
                 x.For<ITableConfigurationService>().Use<TableConfigurationService>();
                 x.For<IDataBrowserService>().Use<DataBrowserService>();
+                x.For<IUserService>().Use<UserService>();
             });
             isInitialized = true;
         }

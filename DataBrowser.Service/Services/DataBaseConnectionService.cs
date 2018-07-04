@@ -95,7 +95,7 @@ namespace DataBrowser.Service.Services
             {
                 if (id == default(int))
                 {
-                    // retirn exception
+                    // Return exception
                 }
                 using (var dataBaseRepo = new RepositoryPattern<DatabaseConnection>())
                 {

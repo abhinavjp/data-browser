@@ -6,17 +6,28 @@ export class CoreToasterService {
     constructor(public toastr: ToastsManager) {
     }
 
-    showSuccess(content?: string, title?: string) {
-        this.toastr.success(content, title, { showCloseButton: true, });
+    showSuccess(content?: string, title?: string, pos?: string) {
+
+        this.toastr.success(content, title,
+            {
+                showCloseButton: true,
+                positionClass: (pos !== '' && pos !== null && pos !== undefined) ? pos : 'toast-top-right'
+            });
     }
-    showError(content?: string, title?: string) {
-        this.toastr.error(content, title, { showCloseButton: true, });
+    showError(content?: string, title?: string, pos?: string) {
+        this.toastr.error(content, title,
+            {
+                showCloseButton: true, positionClass: (pos !== '' && pos !== null && pos !== undefined) ? pos : 'toast-top-right'
+            });
     }
-    showWarning(content?: string, title?: string) {
-        this.toastr.warning(content, title, { showCloseButton: true, });
+    showWarning(content?: string, title?: string, pos?: string) {
+        this.toastr.warning(content, title,
+            {
+                showCloseButton: true, positionClass: (pos !== '' && pos !== null && pos !== undefined) ? pos : 'toast-top-right'
+            });
     }
-    showInfo(content?: string, title?: string) {
-        this.toastr.info(content, title, { showCloseButton: true, });
+    showInfo(content?: string, title?: string, pos?: string) {
+        this.toastr.info(content, title, { showCloseButton: true, positionClass: (pos !== '' && pos !== null && pos !== undefined) ? pos : 'toast-top-right' });
     }
     showCustom() {
         this.toastr.custom('<span style="color: red">Message in red.</span>', null, { enableHTML: true });

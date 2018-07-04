@@ -25,6 +25,7 @@ namespace DataBrowser.Service.Configurator
             cfg.CreateMap<TableConfiguration, TableConfiguratonServiceModel>();
             cfg.CreateMap<TableConfiguratonServiceModel, TableConfiguration>();
             cfg.CreateMap<FieldConfiguration, FieldConfigurationServiceModel>().ReverseMap();
+            cfg.CreateMap<User, UserServiceModel>().ReverseMap();
         }
     }
 }

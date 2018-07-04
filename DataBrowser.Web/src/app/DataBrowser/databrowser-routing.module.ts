@@ -16,11 +16,7 @@ const routes: Routes = [
         path: 'data-browser',
         loadChildren: 'app/DataBrowser/data-browser-main/data-browser-main.module#DatabrowserMainModule'
     },
-    {
-        path: '',
-        redirectTo: '',
-        pathMatch: 'full'
-    }
+    
 ];
 
 @NgModule({

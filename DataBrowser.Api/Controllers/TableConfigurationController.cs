@@ -18,6 +18,7 @@ namespace DataBrowser.Api.Controllers
             _tableConfigurationService = StructureMapperConfigurator.GetInstance<ITableConfigurationService>();
         }
 
+        [Authorize]
         [HttpGet]
         public HttpResponseMessage GetDatabaseConnectionName()
         {

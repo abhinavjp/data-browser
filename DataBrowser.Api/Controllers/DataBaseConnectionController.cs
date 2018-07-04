@@ -18,6 +18,7 @@ namespace DataBrowser.Api.Controllers
         {
             _dataBaseConnectionService = StructureMapperConfigurator.GetInstance<IDataBaseConnectionService>();
         }
+        [Authorize]
         [HttpGet]
         public HttpResponseMessage GetDataBaseConnection()
         {

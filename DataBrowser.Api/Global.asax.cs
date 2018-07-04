@@ -27,13 +27,13 @@ namespace DataBrowser.Api
             });
 
         }
-        protected void Application_BeginRequest()
-        {
-            if (Request.Headers.AllKeys.Contains("Origin") && Request.HttpMethod == "OPTIONS")
-            {
-                Response.Flush();
-            }
-        }
+        //protected void Application_BeginRequest()
+        //{
+        //    if (Request.Headers.AllKeys.Contains("Origin") && Request.HttpMethod == "OPTIONS")
+        //    {
+        //        Response.Flush();
+        //    }
+        //}
         public void JsonFormatter()
         {
             GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

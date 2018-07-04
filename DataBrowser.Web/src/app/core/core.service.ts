@@ -16,7 +16,7 @@ export class CoreService {
         modelRef.content.errorMessages = error;
     }
 
-    exceptionDialog = (title: string, exceptionMessage: string, error1: string, error2: string) => {
+    exceptionDialog = (title: string, exceptionMessage: string, error1?: string, error2?: string) => {
         let modelRef: BsModalRef = this.modalService.show(ServerSideExceptionCatchComponent)
         modelRef.content.title = title;
         modelRef.content.exceptionMessage = exceptionMessage;

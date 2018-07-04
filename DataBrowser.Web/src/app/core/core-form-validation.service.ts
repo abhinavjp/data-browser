@@ -15,12 +15,12 @@ export class CoreFormValidation {
 
     }
 
-    formValidate = (validateForm: FormGroup | any, isShownInToaster?: boolean) => {
+    formValidate = (validateForm: FormGroup | any, isShownInToaster?: boolean, pos?: string) => {
         let errors = this.getFormValidationErrors(validateForm);
         if (!this.coreService.isNullOrUndefined(errors)) {
             if (isShownInToaster) {
                 errors.forEach(e => {
-                    this.coreToasterService.showError(e, 'Error!');
+                    this.coreToasterService.showError(e, 'Error!', pos);
                 });
             } else {
                 let modelRef: BsModalRef = this.modalService.show(AlertDialogComponent)
@@ -78,7 +78,12 @@ export class CoreFormValidation {
             case "maxlength":
                 errorMessage = formControlName + " length is too large";
                 break;
-
+            case "email":
+                errorMessage = "please enter valid email";
+                break;
+            case "mismatchedPassword":
+                errorMessage = "password mismatch!!!";
+                break;
             default:
         }
         return errorMessage;
