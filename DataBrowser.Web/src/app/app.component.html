@@ -43,9 +43,43 @@
 
 <!-- <user-login></user-login> -->
 
-<app-header *ngIf="router.url !== '/login' && router.url !== '/register'"></app-header>
-<app-sidebar *ngIf="router.url !== '/login' && router.url !== '/register'"></app-sidebar>
-<div class="content">
+<app-header 
+*ngIf="!router.isActive('/', true) && 
+!router.isActive('/login', true) &&
+!router.isActive('/register', true)
+"></app-header>
+<app-sidebar 
+*ngIf="!router.isActive('/', true) &&
+!router.isActive('/login', true) &&
+!router.isActive('/register', true)
+"></app-sidebar>
+
+<div 
+*ngIf="router.isActive('/', true) 
+ || router.isActive('/login', true)
+ || router.isActive('/register', true)
+ ">
+  <router-outlet>
+    <span *ngIf="showLoader">
+      <div class="lds-hourglass">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+        <div class="bar4"></div>
+        <div class="bar5"></div>
+        <div class="bar6"></div>
+      </div>
+    </span>
+  </router-outlet>
+</div>
+
+
+
+<div class="content" 
+*ngIf="!router.isActive('/', true) && 
+!router.isActive('/login', true) &&
+!router.isActive('/register', true)"
+>
   <router-outlet>
     <span *ngIf="showLoader">
       <div class="loader">

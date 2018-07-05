@@ -15,10 +15,10 @@ export class AppComponent implements OnInit {
     vRef: ViewContainerRef,
     private loaderService: LoaderService,
     private router: Router,
-    private activeRoute:ActivatedRoute
+    private activeRoute: ActivatedRoute
   ) {
-
-    debugger;
+    
+    
     this.toastr.setRootViewContainerRef(vRef);
   }
   ngOnInit() {

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
     moduleId: module.id,
@@ -7,4 +8,13 @@ import { Component } from '@angular/core';
     styleUrls: ['header.component.scss']
 })
 export class HeaderComponent {
+
+    constructor(private router: Router) {
+
+    }
+
+    Logout = () => {
+        localStorage.clear();
+        this.router.navigate(["/login"]);
+    }
 }

@@ -12,7 +12,7 @@ export class AuthIntersapor implements HttpInterceptor {
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     
-        if (this.router.url === "/login") {
+        if (localStorage.getItem("token") === null || localStorage.getItem("token") === undefined) {
             return next.handle(request.clone());
         }
 

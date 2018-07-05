@@ -35,6 +35,8 @@ export class AuthenticationApiService {
         let body = urlSearchParams.toString();
 
         headers.append('Content-Type', 'application/x-www-form-urlencoded');
+        headers.append("No-Auth", "true");
+        
         this.loderService.display(true);
         return this.http.post(url, body, { headers: headers })
             .map(res => {
