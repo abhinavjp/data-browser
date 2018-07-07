@@ -1,6 +1,7 @@
 ﻿using DbUp;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,9 +13,9 @@ namespace DatabrowserDbUp
     {
         static int Main(string[] args)
         {
-            var connectionString =
-                args.FirstOrDefault()
-                ?? "Server=KUSHAL\\SQLEXPRESS; Database=DataBrowser; Trusted_connection=true";
+            var connectionString = args.FirstOrDefault()
+             ?? ConfigurationManager.ConnectionStrings["DataBrowserEntities"].ConnectionString;
+
 
             var upgrader =
                 DeployChanges.To
